@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Avatar Finder [Steamboost.ge]</title>
+<style>
+.userList{
+    color: white
+}
+.userList:hover{
+    color: orange
+}
+</style>
+{% endblock head %}
+{% block body %}
+<div class="container" style="margin-bottom:5%; margin-top:5%; line-height: 3; font-size: 20px; text-align: center">
+    {% for listing in pizza %}
+    <a class='userList' href="/pizza?avatar={{ avatar }}" target="_blank" style="color: orange">{{ listing.name }} ({{ listing.price }})</a><br>
+    {% endfor %}
+    <img src="{{ avatar_full }}" style="max-width: 250px;"><br>
+    {% for key, value in profiles.items %}
+    <a class='userList' href="{{ website }}{{ key }}" target="_blank" style="color: {% if value.status == 'online' %}green{%else%}red{%endif%}">{{ value.name }} - {{ value.status }} {{ value.joined }}</a><br>
+    {% endfor %}
+</div>
+{% endblock body %}

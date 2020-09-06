@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block withdraw_active %}
+header__menu-link--active
+{% endblock %}
+{% block head %}
+<title>SteamBoost - Withdraw</title>
+<style>
+    .payment_button{
+        background-color: rgb(55, 67, 88);
+        background-position: 50% 50%;
+        background-position-x: 50%;
+        background-position-y: 50%;
+        background-repeat: no-repeat;
+        border-bottom-color: rgba(0, 0, 0, 0);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-style: solid;
+        border-bottom-width: 2px;
+        border-image-outset: 0;
+        border-image-repeat: stretch stretch;
+        border-image-slice: 100%;
+        border-image-source: none;
+        border-image-width: 1;
+        border-left-color: rgba(0, 0, 0, 0);
+        border-left-style: solid;
+        border-left-width: 2px;
+        border-right-color: rgba(0, 0, 0, 0);
+        border-right-style: solid;
+        border-right-width: 2px;
+        border-top-color: rgba(0, 0, 0, 0);
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border-top-style: solid;
+        border-top-width: 2px;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 2px 2px 0px;
+        box-sizing: border-box;
+        color: rgb(189, 189, 189);
+        cursor: pointer;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-feature-settings: normal;
+        font-kerning: auto;
+        font-language-override: normal;
+        font-optical-sizing: auto;
+        font-size: 14px;
+        font-size-adjust: none;
+        font-stretch: 100%;
+        font-style: normal;
+        font-variant: normal;
+        font-variant-alternates: normal;
+        font-variant-caps: normal;
+        font-variant-east-asian: normal;
+        font-variant-ligatures: normal;
+        font-variant-numeric: normal;
+        font-variant-position: normal;
+        font-variation-settings: normal;
+        font-weight: 400;
+        height: 60px;
+        letter-spacing: normal;
+        line-height: 21.9833px;
+        list-style-type: none;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        outline-color: rgb(189, 189, 189);
+        outline-style: none;
+        outline-width: 0px;
+        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        text-transform: none;
+        width: 100px;
+    }
+    .payment_button_emoney{
+        background-image: url('/static/img/emoney.png')
+        
+    }
+    .payment_button_oppa{
+        background-image: url('/static/img/oppa.png')
+    }
+    .ffff{
+        background-color: rgb(38, 48, 68);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 0px;
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 4px 8px 0px;
+        box-sizing: border-box;
+        color: rgb(30, 34, 36);
+        flex-shrink: 0;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 16px;
+        list-style-type: none;
+        max-width: 591px;
+        min-width: auto;
+        order: 0;
+        padding-bottom: 25px;
+        padding-left: 34px;
+        padding-right: 34px;
+        padding-top: 25px;
+        width: 504.8px;
+        -moz-box-ordinal-group: 1;
+    }
+</style>
+{% endblock head %}
+{% block body %}
+<app>
+    <br><br><br>
+    <div class='ffff container'>
+        <label class="payment__label" for="newsletter"><span>{% blocktrans %}რაოდენობა:{% endblocktrans %}</span></label>
+        <input placeholder="69 ₾" class="payment__input ng-untouched ng-pristine ng-invalid" formcontrolname="paypalEmailConfirm" id='amount' autocomplete="off" type="text">
+        <hr class="cash-offer__divider">
+        <payment-cmp class="cash-offer__payout-container  payment">
+            <p class="payment__payout-text">
+                {% blocktrans %}აირჩიეთ 
+                <span>გადახდის მეთოდი</span>{% endblocktrans %}
+            </p>
+
+            <ul class="payment__payments-container">
+                <li>
+
+                    <button id='emoney_button' class="payment_button payment_button_emoney" title='emoney.ge'></button>
+                </li>
+                <li style="margin-left: 10px">
+                    <button id='oppa_button' class="payment_button payment_button_oppa" title='oppa.ge'></button>
+                </li>
+                <li>
+                </li>
+            </ul>
+            <span>{% blocktrans %}სხვა ე-საფულეში გადარიცხვისთვის დაგვიკავშირდით <a href="https://discord.gg/GJnbWes" style="color: red">დისქორდზე{% endblocktrans %}</a><span>
+            <div>
+        <div id="form" style="display: none">
+            <div class="payment__narrow-container">
+                <div class="payment__newsletter">
+                    <label class="payment__label" for="newsletter">{% blocktrans %}შეიყვანეთ
+                        <span> ანგარიშის ან მობილურის ნომერი:{% endblocktrans %} </span>
+                    </label>
+                    <input class="payment__input ng-untouched ng-pristine ng-invalid" dir="ltr" formcontrolname="email" id="id" type="text">
+                </div>
+                <div class="payment__newsletter">
+                    <label class="payment__label" for="newsletter">{% blocktrans %}შეიყვანეთ
+                        <span>მიმღების სახელი და გვარი:{% endblocktrans %}</span>
+                    </label>
+                    <input class="payment__input ng-untouched ng-pristine ng-invalid" dir="ltr" formcontrolname="email" id="name" type="text">
+                </div>
+            </div>
+            <div class="payment__splitter-container">
+                <div class="payment__splitter"></div>
+            </div>
+            <div class="payment__bottom-container">
+                <ul class="payment__bill">
+                    <li class="payment__bill-item">
+                        <p>{% blocktrans %}რაოდენობა:{% endblocktrans %}</p>
+                        <p id='amount2' class="payment__bill-summ">
+                            0 ₾
+                        </p>
+                    </li>
+                    <li class="payment__bill-item">
+                        <p>{% blocktrans %}გადარიცხვის საკომისიო:{% endblocktrans %}
+                            <span class="fee">
+                                (2%):
+                            </span>
+                        </p>
+                        <p class="payment__bill-summ">
+                            <span id='fee' class="feeSum">
+                                -0 ₾
+                            </span>
+                        </p>
+                    </li>
+                    <li class="payment__bill-item">
+                        <p>{% blocktrans %}დაგერიცხებათ:{% endblocktrans %}</p>
+                        <p class="payment__bill-summ">
+                            <span id='final'>0</span>
+                            <i>₾</i>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+            <hr class="cash-offer__divider">
+            <button style="background-color: rgb(229, 13, 13);" class="payment__cash-btn" id="submit" disabled="">{% blocktrans %}გატანა{% endblocktrans %}</button>
+        </div>
+        </payment-cmp>
+    </div>
+</div>
+</app>
+<script>
+    var emoney = true;
+    $('#emoney_button').click(function(){
+        emoney = true;
+        $('#emoney_button').css('border-color','rgb(229, 13, 13)');
+        $('#oppa_button').removeAttr('style');
+        $('#form').show();
+    });
+    $('#oppa_button').click(function(){
+        emoney = false;
+        $('#oppa_button').css('border-color','rgb(229, 13, 13)');
+        $('#emoney_button').removeAttr('style');
+        $('#form').show();
+    });
+    
+    $('#amount').keyup(
+        function(){
+            var amount = Number($('#amount').val());
+            var fee = Number(0.02 * amount);
+            var final = Number(amount - fee);
+            $('#amount2').text(amount.toFixed(2) + ' ₾');
+            $('#fee').text(fee.toFixed(2) + ' ₾');
+            $('#final').text(final.toFixed(2));
+            if(final <= 0){
+                $('#submit').attr('disabled');
+            } else{
+                $('#submit').removeAttr('disabled');
+            }
+        })
+    
+    $('#submit').click(function(){
+        $.post('/withdraw', {
+            'amount': $('#amount').val(),
+            'website': emoney ? 'emoney':'oppa',
+            'identifier': $('#id').val(),
+            'name': $('#name').val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        }, function (data, status) {
+            bootbox.alert(data)
+        });
+    })
+    
+</script>
+{% endblock body %}

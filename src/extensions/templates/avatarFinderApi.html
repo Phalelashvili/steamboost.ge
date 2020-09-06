@@ -1,0 +1,8 @@
+{% for u in users %}
+{% if u.hasGame %}
+<a style="font-size: 15px; color: {% if u.visibilityState == 'Private' %}yellow{% else %} {% if u.profileStatus == 'online' %}green{%else%}red{%endif%}{% endif %}" href="https://steamcommunity.com/profiles/{{ u.steam64id }}" target="_blank">{{ u.name }} ({{ u.visibilityState }})</a>{% if showAddButton %}<a style="color: white; font-size: 15px" href="steam://friends/add/{{ u.steam64id }}" target="_blank"> Add</a>{% endif %}
+{% else %}
+<a style="color: black" href="https://steamcommunity.com/profiles/{{ u.steam64id }}" target="_blank">{{ u.name }} ({{ u.visibilityState }})</a>
+{% endif %}
+<br />
+{% endfor %}

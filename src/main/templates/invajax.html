@@ -1,0 +1,49 @@
+<div class='inventory__animation-wrap'>
+    <ul class='l-inventory-grid'>
+        <!-- CSGO Keys -->
+        {% for key, item in valid_inv_keys.items %}
+        <skin-cmp price='{{ item.price }}'  skin_id='{{ item.id }}' class='l-inventory-grid__item skin selectable_skin' style='color: rgb(210, 210, 210);'>
+            <div class='inventory__animation-wrap skin__inner'>
+                <figure class='skin__img-wrap'><img src='{{ item.icon_url }}' alt='{{ item.name }}'></figure>
+                <p class='skin__price'>{{ item.price }}₾</p>
+                <p class='skin__grade'><span>Key</span></p>
+                <p class='skin__name'><span>{{ item.name }}</span></p>
+            </div>
+        </skin-cmp>
+        {% endfor %}
+        <!-- end -->
+        <!-- TF2 Keys -->
+        {% for key, item in valid_inv_tf2keys.items %}
+        <skin-cmp price='{{ item.price }}'  skin_id='{{ item.id }}' class='l-inventory-grid__item skin tf2_selectable_skin' style='color: rgb(210, 210, 210);'>
+            <div class='inventory__animation-wrap skin__inner'>
+                <figure class='skin__img-wrap'><img src='{{ item.icon_url }}' alt='{{ item.name }}'></figure>
+                <p class='skin__price'>{{ item.price }}₾</p>
+                <p class='skin__name'><span>{{ item.name }}</span></p>
+                <p class='skin__grade'><span>Key</span></p>
+            </div>
+        </skin-cmp>
+        {% endfor %}
+        <!-- end -->
+        <!-- Inventory -->
+        {% for key, item in valid_inv.items %}
+        <skin-cmp price='{{ item.price }}' skin_id='{{ item.id }}' class='l-inventory-grid__item skin selectable_skin' style='color: rgb(210, 210, 210);'>
+            <div class='inventory__animation-wrap skin__inner'>
+                <figure class='skin__img-wrap'><img src='{{ item.icon_url }}' alt='{{ item.name }}'></figure>
+                <p class='skin__name'><span>{{ item.name }}</span></p>
+                <p class='skin__price'>{{ item.price }}₾</p>
+                <p class='skin__grade'><span>{{ item.wear }}</span></p>
+            </div>
+        </skin-cmp>
+        {% endfor %}
+        <!-- Not selectable inventory -->
+        {% for key, item in inv.items %}
+        <skin-cmp skin_id='{{ item.id }}' class='l-inventory-grid__item skin skin--nonTradable' style='color: rgb(210, 210, 210);'>
+            <div class='skin__inner skin__inner--disabled'>
+                <figure class='skin__img-wrap  skin__img-wrap--is-disabled'><img src='{{ item.icon_url }}' alt='{{ item.name }}'></figure>
+                <p class='skin__name'><span>{{ item.condition }}</span></p>
+            </div>
+        </skin-cmp>
+        {% endfor %}
+        <!-- end -->
+    </ul>
+</div>

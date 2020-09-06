@@ -1,0 +1,853 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block boost_active %} header__menu-link--active {% endblock %} {% block head %}
+{% load webpush_notifications %}
+{% webpush_header %}
+<title>SteamBoost - Steam Boosting Service</title>
+<meta name="Description" content="Steam boosting service - Free hour boost, Trade boost, Comment boost, Artwork boost"><style>
+    .api__main {
+        border-top-color: rgb(46, 55, 71);
+        border-top-style: solid;
+        border-top-width: 1px;
+        box-sizing: border-box;
+        color: rgb(182, 184, 186);
+        display: none;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        height: auto;
+        letter-spacing: normal;
+        line-height: 16px;
+        padding-bottom: 40px;
+        padding-left: 100px;
+        padding-right: 100px;
+        padding-top: 40px;
+        text-size-adjust: 100%;
+        width: 100%;
+        -webkit-box-direction: normal;
+        -webkit-font-smoothing: antialiased;
+    }
+    .form-control, .api__input-paragraph{
+        font-size: 16px;
+    }
+    .calc{
+        font-size: 14px;
+    }
+    #webpush-subscribe-button{
+        background-color: rgba(0, 0, 0, 0);
+        background-image: none;
+        border-bottom-color: rgb(45, 133, 10);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-image-outset: 0;
+        border-image-repeat: stretch stretch;
+        border-image-slice: 100%;
+        border-image-source: none;
+        border-image-width: 1;
+        border-left-color: rgb(45, 133, 10);
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right-color: rgb(45, 133, 10);
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-top-color: rgb(45, 133, 10);
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border-top-style: solid;
+        border-top-width: 1px;
+        box-sizing: border-box;
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+        display: inline-block;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-feature-settings: normal;
+        font-kerning: auto;
+        font-language-override: normal;
+        font-optical-sizing: auto;
+        font-size: 14px;
+        font-size-adjust: none;
+        font-stretch: 100%;
+        font-style: normal;
+        font-variant: normal;
+        font-variant-alternates: normal;
+        font-variant-caps: normal;
+        font-variant-east-asian: normal;
+        font-variant-ligatures: normal;
+        font-variant-numeric: normal;
+        font-variant-position: normal;
+        font-variation-settings: normal;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 20px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        outline-color: rgb(255, 255, 255);
+        outline-style: none;
+        outline-width: 0px;
+        overflow: visible;
+        overflow-x: visible;
+        overflow-y: visible;
+        padding-bottom: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 6px;
+        text-align: center;
+        text-decoration: none;
+        text-decoration-color: rgb(255, 255, 255);
+        text-decoration-line: none;
+        text-decoration-style: solid;
+        text-transform: none;
+        touch-action: manipulation;
+        vertical-align: middle;
+        white-space: nowrap;
+        -moz-appearance: button;
+        -moz-user-select: none;
+    }
+</style>
+{% endblock head %} {% block body %}
+<main class="l-main-content text-center">
+    <app-partnership-cmp>
+        {% if user.gems > 0 %}
+        <p class="api__paragraph" style="color: white; font-size: 30">
+            <br>
+            <a id="returnGems_" style="color: orange" onclick="gems()">თქვენ გაქვთ {{ user.gems }} gem დასაბრუნებელი
+            <br>თუ თრეიდ ბუსტი ჩართულია დაელოდეთ დასრულებას</a>
+        </p>
+        {% endif %}
+    <article class="api__container api">
+        <div style="height: 62px" class="profile__header">
+            <ul class="profile__list" style="margin: auto">
+                <li class="profile__item">
+                    <a id="trade_button" class="profile__link" onclick="show_trade()">Trade Boost</a>
+                </li>
+                <li class="profile__item">
+                    <a id="comment_button" class="profile__link" onclick="show_comment()">Comment Boost</a>
+                </li>
+                <li class="profile__item">
+                    <a id="hour_button" class="profile__link" onclick="show_hour()">Hour Boost</a>
+                </li>
+                <li class="profile__item">
+                    <a id="artwork_button" class="profile__link" onclick="show_artwork()">Artwork Boost</a>
+                </li>
+            </ul>
+        </div>
+        <div id="pre" style="display: block">
+            <div class="api__info api__main">
+            </div>
+            <div class="api__info">
+                <h1 class="api__list-title">{% blocktrans %}აირჩიეთ ბუსტი{% endblocktrans %}</h1>
+            </div>
+            <div class="api__form-wrap">
+                <form class="api__form ng-untouched ng-pristine ng-invalid" novalidate="">
+                    {% if printTrade %}
+                        <h2 class="api__list-title" style="margin-left: 0">Trade Boost</h1>
+                        <ul>
+                        {% for obj in TcurrentlyBoosting %}
+                            <li style="width: 600px; margin-left: 50;">
+                                <h2 class="api__list-title" style="color: white; font-size: 20; display: inline-block; margin: 0">{{ obj }}</h2>
+                                {% if not obj.stopped %}
+                                <button style="border-radius: 100px; margin-bottom: 7" class="btn btn-warning" onclick="$.get('/boost/pause/trade/{{obj.id}}')"><i class="far fa-pause-circle"></i> {% blocktrans %}გაჩერება{% endblocktrans %}</button>
+                                {% endif %}
+                                <button style="border-radius: 100px; margin-bottom: 7" class="btn btn-danger" onclick="bootbox.confirm('[Trade Boost - {{obj}}] {% blocktrans %}ნამდვილად გსურთ წაშლა? (თანხა უკან არ დაგიბრუნდებათ){% endblocktrans %}', function(result){if(result==true){$.get('/boost/delete/trade/{{obj.id}}')}});return false"><i class="far fa-trash-alt"></i> {% blocktrans %}წაშლა{% endblocktrans %}</button>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if printHour %}
+                        <h2 class="api__list-title" style="margin-left: 0">Hour Boost</h1>
+                        <ul>
+                        {% for obj in HcurrentlyBoosting %}
+                            <li style="width: 600px; margin-left: 50;">
+                                <h2 class="api__list-title" style="color: white; font-size: 20; display: inline-block; margin: 0">{{ obj }}{% blocktrans %}სთ{% endblocktrans %}</h2>
+                                {% if not obj.stopped %}
+                                <button style="border-radius: 100px; margin-bottom: 7" class="btn btn-warning" onclick="$.get('/boost/pause/hour/{{obj.id}}')"><i class="far fa-pause-circle"></i> {% blocktrans %}გაჩერება{% endblocktrans %}</button>
+                                {% endif %}
+                                <button style="border-radius: 100px; margin-bottom: 7" class="btn btn-success" onclick="edit({{obj.id}}, '{{obj}}', '{{obj.games}}');return false"><i class="fas fa-edit"></i> {% blocktrans %}შეცვლა{% endblocktrans %}</button>
+                                <button style="border-radius: 100px; margin-bottom: 7" class="btn btn-danger" onclick="bootbox.confirm('[Hour Boost - {{obj}}] {% blocktrans %}ნამდვილად გსურთ წაშლა? (თანხა უკან არ დაგიბრუნდებათ){% endblocktrans %}', function(result){if(result==true){$.get('/boost/delete/hour/{{obj.id}}')}});return false"><i class="far fa-trash-alt"></i> {% blocktrans %}წაშლა{% endblocktrans %}</button>
+                            
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        <div class="api__form-wrap" style="align-content: center">
+            {% webpush_button %}
+            <div id="trade_info" style="display: none" class="api__main">
+                <div class="api__info">
+                    <h1 class="api__list-title">
+                        Trade Boost
+                    </h1>
+                    <a href="https://steamcommunity.com/profiles/76561198415453860" target="_blank"><img src="/static/img/trade.png" style="width: 70%;"></a><br><br>
+                    {% blocktrans %}<p class="api__paragraph">
+                    შეიყვანეთ თქვენი Steam-ის მონაცემები
+                    <h1 class="api__list-title">თუ არ გაქვთ Shared Secret და Identity Secret</h1>
+                    <br>თითო თრეიდით გამოიგზავნება 1 Gem
+                    <br>Gem-ების მოპარვის თავიდან ასარიდებლად
+                    <br>თქვენ არ შეგეძლებათ საიტის გამოყენება სანამ არ დააბრუნებთ
+                    <br>
+                    <br><a id="returnGems" style="color: red" onclick="gems()">დასრულების შემდეგ, დააბრუნეთ Gem-ები</a>
+                    <br>
+                    <br>შეგიძლიათ აბუსტოთ 250 თრეიდი უფასოდ (მხოლოდ ერთხელ) შესამოწმებლად
+                </p>{% endblocktrans %}
+                <br>{% blocktrans %}<br><a style="color: red" onclick="buy()">თითო კრედიტი ღირს 1 ₾</a>{% endblocktrans %}
+                </div>
+            </div>
+            <div id="comment_info" style="display: none" class="api__main">
+                <div class="api__info">
+                    <h1 class="api__list-title">
+                        Comment Boost
+                    </h1>
+                    <a href="https://steamcommunity.com/profiles/76561198415453860" target="_blank"><img src="/static/img/comment.png" style="width: 70%;"></a><br><br>
+                    {% blocktrans %}<p class="api__paragraph"><a style="color: orange" href="https://steamboost.ge/static/commentlist" target="_blank">ჩვენი არჩეული კომენტარების</a> დასაწერად დატოვეთ ცარიელი
+                        <br>ან
+                        <br>რამდენიმე კომენტარის რანდომად ამოსარჩევად, კომენტარები გამოყავით წერტილ-მძიმით(;), მაგალითად:
+                        <br>+rep trusted;+rep nice trader;+rep i went first
+                        <br>(კომენტარები იწერება ვაკ ბანიანი აქაუნთებით)
+                    </p>{% endblocktrans %}<br>
+                </div>
+            </div>
+            <div id="hour_info" style="display: none" class="api__main">
+                <div class="api__info">
+                    <h1 class="api__list-title">
+                        Hour Boost
+                    </h1>
+                    <a href="https://steamcommunity.com/profiles/76561198081604016" target="_blank"><img src="/static/img/hour.png" style="width: 40%;"></a><br><br>
+                    {% blocktrans %}<p class="api__paragraph">თამაშების გამოსაყოფად გამოიყენეთ ტირე(-) მაგალითად:
+                        <br>730-55780-670
+                        <br>თამაშების ID მითითებულია თამაშის ლინკში მარკეტზე
+                        <br>თამაშების მაქსიმალური რაოდენობაა 30
+                    </p>{% endblocktrans %}
+                    {% blocktrans %}<br><a style="color: red" onclick="buy()">თითო კრედიტი ღირს 1 ₾</a>{% endblocktrans %}
+                </div>
+            </div>
+            <div id="artwork_info" style="display: none" class="api__main">
+                <div class="api__info">
+                    <h1 class="api__list-title">
+                        Artwork Boost
+                    </h1>
+                    <p class="api__paragraph">
+                    <br>
+                        <br><br><br><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <form id="trade_form" style="display: none" class="api__form ng-untouched ng-pristine ng-invalid" onsubmit="t_confirm(); return false;" novalidate="">
+            <h2 class="api__form-title">
+                <a style='color:orange; font-size:30'>{% blocktrans %}ბუსტის ჩართვამდე გამორთეთ სტიმი!{% endblocktrans %}</a><br>
+                <br>{% blocktrans %}სხვა მოწყობილობიდან ავტორიზაციის შემთხვევაში ბუსტი გაითიშება!{% endblocktrans %}
+                <h2 class="api__form-title">{% blocktrans %}უმჯობესია გამოიყენოთ <a style='color: orange' href='https://imbaboost.com/steam-backup-codes.html' target='_blank'>Backup კოდები</a><br><br>{% endblocktrans %}
+            </h2>
+            {% if user.freeTradeAvailable %}
+            <input class="inventory__checkbox ng-untouched ng-valid ng-dirty" style='display: none' id="freeTrade" type="checkbox" autocomplete="off">
+            <label class="inventory__custom-select" style='font-size: 15' for="freeTrade">{% blocktrans %}უფასო 250 თრეიდი{% endblocktrans %}</label>
+            <br><br>
+            {% endif %}
+            <label class="api__main-paragraph api__input-paragraph" for="t_steam_username">Steam Login:</label>
+            <input name="t_steam_username" id="t_steam_username" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+            <br>
+            <label class="api__main-paragraph api__input-paragraph" for="t_steam_password">Steam Password:</label>
+            <input name="t_steam_password" id="t_steam_password" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+            <br>
+            <input class="inventory__checkbox ng-untouched ng-valid ng-dirty" style="display: none" id="switch_secrets" type="checkbox" autocomplete="off">
+            <label class="inventory__custom-select" style='font-size: 15' for="switch_secrets">{% blocktrans %}Secret-ებით აბუსტვა{% endblocktrans %}</label>
+            <br><br><br><br>
+            <div id='secrets'>
+                <label class="api__main-paragraph api__input-paragraph" for="identity_secret">Identity Secret:</label>
+                <input name="identity_secret" id="identity_secret" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+                <br>
+                <label class="api__main-paragraph api__input-paragraph" for="shared_secret">Shared Secret:</label>
+                <input name="shared_secret" id="shared_secret" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+            </div>
+            <div id='not_secrets'>
+                <label class="api__main-paragraph api__input-paragraph" for="authcode" title='უმჯობესია გამოიყენოთ Backup კოდი, რომელიც არ იწურება'><a style='color: red' href='https://imbaboost.com/steam-backup-codes.html' target='_blank'>{% blocktrans %}Steam Guard-ის კოდი:{% endblocktrans %}</a></label>
+                <input name="authcode" id="authcode" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+                <br>
+            </div>
+            <div id='trade_amountDiv'>
+            <label class="api__main-paragraph api__input-paragraph" for="trade_amount">{% blocktrans %}რაოდენობა:{% endblocktrans %}</label>
+            <input placeholder="Min: 1000, Max: 50000" name="trade_amount" id="trade_amount" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+            </div>
+            <br>
+            <a class="calc" id="t_calc">ფასი: 0 კრედიტი</a>
+            <br>
+            <div class="api__btn-wrap">
+                <button class="api__btn-send" type="submit">{% blocktrans %}ჩართვა{% endblocktrans %}</button>
+            </div>
+        </form>
+        <form id="comment_form" style="display: none" class="api__form ng-untouched ng-pristine ng-invalid" onsubmit="c_confirm(); return false;" novalidate="">
+            {% if user.freeCommentAvailable %}
+            <input class="inventory__checkbox ng-untouched ng-valid ng-dirty" style='display: none' id="freeComment" type="checkbox" autocomplete="off">
+            <label class="inventory__custom-select" style='font-size: 15' for="freeComment">{% blocktrans %}უფასო 6 კომენტარი{% endblocktrans %}</label>
+            <br><br>
+            {% endif %}
+            <div id="commentAmountDiv">
+                <label class="api__main-paragraph api__input-paragraph" for="comment_amount">{% blocktrans %}კომენტარების რაოდენობა:{% endblocktrans %}</label>
+                <input value="100" name="comment_amount" id="comment_amount" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required="" type="number" min="100" placeholder="Min: 100, Max: 1000" max="1000" step="100" onkeydown="return false">
+            </div>
+            <br>
+            <label class="api__main-paragraph api__input-paragraph" for="comment">{% blocktrans %}კომენტარი:{% endblocktrans %}</label>
+            <input placeholder="{% blocktrans %}დატოვეთ ცარიელი თუ გინდათ ჩვენი არჩეული კომენტარების დაწერა{% endblocktrans %}" name="comment" id="comment" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required />
+            <br>
+            {% comment %} <label class="api__main-paragraph api__input-paragraph" for="delay">{% blocktrans %}დრო თითო კომენტარს შორის (წუთებში):{% endblocktrans %}</label>
+            <input placeholder="{% blocktrans %}დატოვეთ ცარიელი თუ delay არ გინდათ{% endblocktrans %}" name="delay" id="delay" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required />
+            <br>
+            {% endcomment %}
+            <a class="calc" id="c_calc">ფასი: 0 ლარი</a>
+            <br>
+            <div class="api__btn-wrap">
+                <button class="api__btn-send" type="submit">{% blocktrans %}ჩართვა{% endblocktrans %}</button>
+            </div>
+        </form>
+        <form id="artwork_form" style="display: none" class="api__form ng-untouched ng-pristine ng-invalid" onsubmit="a_confirm(); return false;" novalidate="">
+            {% if user.freeArtworkAvailable %}
+            <input class="inventory__checkbox ng-untouched ng-valid ng-dirty" style='display: none' id="freeArtwork" type="checkbox" autocomplete="off">
+            <label class="inventory__custom-select" style='font-size: 15' for="freeArtwork">{% blocktrans %}უფასო 10 შეფასება{% endblocktrans %}</label>
+            <br><br>
+            {% endif %}
+            <label class="api__main-paragraph api__input-paragraph" for="artwork">{% blocktrans %}არტვორკის ლინკი{% endblocktrans %}:</label>
+            <input placeholder=" https://steamcommunity.com/sharedfiles/filedetails/?id=1436481823" name="artwork" id="artwork" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required />
+            <div id="artworkAmountDiv">
+                <label class="api__main-paragraph api__input-paragraph" for="like_amount">Like:</label>
+                <input value="250" name="like_amount" id="like_amount" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required="" type="number" min="250" placeholder="Min: 100, Max: 1000" max="1750" step="250" onkeydown="return false">
+                <label class="api__main-paragraph api__input-paragraph" for="fav_amount">Favorite:</label>
+                <input value="250" name="fav_amount" id="fav_amount" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required="" type="number" min="250" placeholder="Min: 100, Max: 1000" max="1750" step="250" onkeydown="return false">
+            </div>
+            <br>
+            <a class="calc" id="a_calc">ფასი: 0 ლარი</a>
+            <br>
+            <div class="api__btn-wrap">
+                <button class="api__btn-send" type="submit">{% blocktrans %}ჩართვა{% endblocktrans %}</button>
+            </div>
+        </form>
+        <form id="hour_form" style="display: none" class="api__form ng-untouched ng-pristine ng-invalid" onsubmit="h_confirm(); return false;" novalidate="">
+            {% blocktrans %}<h2 class='api__form-title'>უმჯობესია გამოიყენოთ <a style='color: orange' href='https://imbaboost.com/steam-backup-codes.html' target='_blank'>Backup კოდები</a><br><br>{% endblocktrans %}
+            </h2>
+            <input class="inventory__checkbox ng-untouched ng-valid ng-dirty" style='display: none' id="free" type="checkbox" autocomplete="off">
+            <label class="inventory__custom-select" style='font-size: 15' for="free">{% blocktrans %}უფასო ბუსტი (ingame-დ დაეწერება საიტის ლინკი){% endblocktrans %}</label>
+            <br><br>
+            <label class="api__main-paragraph api__input-paragraph" for="h_steam_username">Username:</label>
+            <input name="h_steam_username" id="h_steam_username" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid">
+            <br>
+            <label class="api__main-paragraph api__input-paragraph" for="h_steam_password">Password:</label>
+            <input name="h_steam_password" id="h_steam_password" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid">
+            <br>
+            <label class="api__main-paragraph api__input-paragraph" for="boost_time">{% blocktrans %}დრო: (სთ){% endblocktrans %}</label>
+            <input placeholder='{% blocktrans %}მინიმუმი: 1 საათი, მაქსიმუმი: 1000 საათი{% endblocktrans %}' name="boost_time" id="boost_time" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid" required>
+            <br>
+            <label class="api__main-paragraph api__input-paragraph" for="games_id">{% blocktrans %}თამაშები:{% endblocktrans %}</label>
+            <input placeholder='730-578080' name="games_id" id="games_id" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid">
+            <br>
+            <label class="api__main-paragraph api__input-paragraph" for="h_authcode">{% blocktrans %}Steam Guard-ის კოდი:{% endblocktrans %}</label>
+            <input name="h_authcode" id="h_authcode" type="text" class="form-control api__input api_input--email ng-untouched ng-pristine ng-invalid">
+            <br>
+            <a class="calc" id="h_calc">{% blocktrans %}ფასი: 0 კრედიტი{% endblocktrans %}</a>
+            <br>
+            <div class="api__btn-wrap">
+                <button class="api__btn-send" type="submit">{% blocktrans %}ჩართვა{% endblocktrans %}</button>
+            </div>
+        </form>
+    </app-partnership-cmp>
+    </article>
+</main>
+<script>
+    function edit(id, obj, current_games){
+        bootbox.prompt({
+        title: "[Hour Boost - " + obj + "] {% blocktrans %}შეიყვანეთ ახალი თამაშების სია (გამოყავით ტირეთი (-) მაგ: 730-570-578080){% endblocktrans %}",
+        placeholder: current_games,
+        inputType: 'textarea',
+        buttons: {
+                cancel: {
+                    label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                    className: 'btn-danger',
+                },
+                confirm: {
+                    label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                    className: 'btn-success',
+                },
+            },
+            callback: function(result) {                
+                if (result !== null) {
+                    $.post('/boost/edit/hour/' + id, {'games': result, 'csrfmiddlewaretoken': '{{ csrf_token }}'}).always(function(data, status){
+                        bootbox.alert(data.responseText || data, function(){ location.reload() })
+                    })                         
+                }
+            }
+        })
+    }
+    setInterval(function(){
+        $('#returnGems').fadeOut(1000).fadeIn(1000);
+        {% if user.gems > 0 %}
+        $('#returnGems_').fadeOut(1000).fadeIn(1000);
+        {% endif %}
+    }, 2000)
+    {% for obj in trade_stopped %}
+        bootbox.prompt({
+        title: "[Trade Boost - {{ obj.username }}] {% blocktrans %}დაშვებული შეცდომის გამო საჭიროა <a style='color: red' href='https://imbaboost.com/steam-backup-codes.html' target='_blank'>კოდის</a> ახლიდან შეყვანა<br><br>თუ ეს შეტყობინება შეუჩერებლივ მოდის, დაგვიკავშირდით <a style='color:red' href='https://discordapp.com/invite/GJnbWes' target='_blank'>დისქორდზე</a><br>ბევრი კოდის წინასწარ შესაყვანად გამოყავით ტირეთი(-) (მაგალითად: XXXXXXX-YYYYYYY-ZZZZZZZZ){% endblocktrans %}",
+        inputType: 'textarea',
+        buttons: {
+                cancel: {
+                    label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                    className: 'btn-danger',
+                },
+                confirm: {
+                    label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                    className: 'btn-success',
+                },
+            },
+            callback: function(result) {                
+                if (result !== null && result != '') {
+                    $.get('/boost/restart/trade/{{ obj.username }}/' + result).always(function(data, status){
+                        bootbox.alert(data.responseText || data, function(){ location.reload() })
+                    })                         
+                }
+            }
+        });
+    {% endfor %}
+    {% for obj in hour_stopped %}
+        bootbox.prompt({
+        title: "[Hour Boost - {{ obj.username }}] {% blocktrans %}დაშვებული შეცდომის გამო საჭიროა <a style='color: red' href='https://imbaboost.com/steam-backup-codes.html' target='_blank'>კოდის</a> ახლიდან შეყვანა<br><br>თუ ეს შეტყობინება შეუჩერებლივ მოდის, დაგვიკავშირდით <a style='color:red' href='https://discordapp.com/invite/GJnbWes' target='_blank'>დისქორდზე</a><br>ბევრი კოდის წინასწარ შესაყვანად გამოყავით ტირეთი(-) (მაგალითად: XXXXXXX-YYYYYYY-ZZZZZZZZ){% endblocktrans %}",
+        inputType: 'textarea',
+        buttons: {
+                cancel: {
+                    label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                    className: 'btn-danger',
+                },
+                confirm: {
+                    label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                    className: 'btn-success',
+                },
+            },
+            callback: function(result) {                
+                if (result !== null && result != '') {
+                    $.get('/boost/restart/hour/{{ obj.username }}/' + result).always(function(data, status){
+                        bootbox.alert(data.responseText || data, function(){ location.reload() })
+                    })                         
+                }
+            }
+        });
+    {% endfor %}
+    $(document).ready(function(){
+        $('#secrets').hide();
+        $('#not_secrets').show();  
+        $("#switch_secrets").on("change", function() {
+            if (this.checked){
+                $('#not_secrets').hide();    
+                $('#secrets').show();
+            } else {
+                $('#secrets').hide();
+                $('#not_secrets').show();            
+            }
+        })
+        {% if user.freeTradeAvailable %}
+        $("#freeTrade").on("change", function() {
+            if (this.checked){
+                $('#trade_amountDiv').hide();
+            } else {
+                $('#trade_amountDiv').show();
+            }
+        })
+        {% endif %}
+        {% if user.freeCommentAvailable %}
+        $("#freeComment").on("change", function() {
+            if (this.checked){
+                $('#commentAmountDiv').hide();
+            } else {
+                $('#commentAmountDiv').show();
+            }
+        })
+        {% endif %}
+        {% if user.freeArtworkAvailable %}
+        $("#freeArtwork").on("change", function() {
+            if (this.checked){
+                $('#artworkAmountDiv').hide();
+            } else {
+                $('#artworkAmountDiv').show();
+            }
+        })
+        {% endif %}
+    })
+
+    function show_trade() {
+        document.getElementById("trade_button").classList.add("profile__link--active")
+        document.getElementById("comment_button").classList.remove("profile__link--active")
+        document.getElementById("hour_button").classList.remove("profile__link--active")
+        document.getElementById("artwork_button").classList.remove("profile__link--active")
+        document.getElementById("pre").style.display = 'none';
+        document.getElementById("trade_form").style.display = 'block';
+        document.getElementById("hour_form").style.display = 'none';
+        document.getElementById("comment_form").style.display = 'none';
+        document.getElementById("artwork_form").style.display = 'none';
+        document.getElementById("trade_info").style.display = 'block';
+        document.getElementById("hour_info").style.display = 'none';
+        document.getElementById("comment_info").style.display = 'none';
+        document.getElementById("artwork_info").style.display = 'none';
+
+    }
+
+    function show_hour() {
+        document.getElementById("hour_button").classList.add("profile__link--active")
+        document.getElementById("trade_button").classList.remove("profile__link--active")
+        document.getElementById("comment_button").classList.remove("profile__link--active")
+        document.getElementById("artwork_button").classList.remove("profile__link--active")
+        document.getElementById("pre").style.display = 'none';
+        document.getElementById("hour_form").style.display = 'block';
+        document.getElementById("trade_form").style.display = 'none';
+        document.getElementById("comment_form").style.display = 'none';
+        document.getElementById("artwork_form").style.display = 'none';
+        document.getElementById("hour_info").style.display = 'block';
+        document.getElementById("trade_info").style.display = 'none';
+        document.getElementById("comment_info").style.display = 'none';
+        document.getElementById("artwork_info").style.display = 'none';
+    }
+
+    function show_comment() {
+        document.getElementById("comment_button").classList.add("profile__link--active")
+        document.getElementById("trade_button").classList.remove("profile__link--active")
+        document.getElementById("hour_button").classList.remove("profile__link--active")
+        document.getElementById("artwork_button").classList.remove("profile__link--active")
+        document.getElementById("pre").style.display = 'none';
+        document.getElementById("comment_form").style.display = 'block';
+        document.getElementById("trade_form").style.display = 'none';
+        document.getElementById("hour_form").style.display = 'none';
+        document.getElementById("artwork_form").style.display = 'none';
+        document.getElementById("comment_info").style.display = 'block';
+        document.getElementById("trade_info").style.display = 'none';
+        document.getElementById("hour_info").style.display = 'none';
+        document.getElementById("artwork_info").style.display = 'none';
+    }
+
+    function show_artwork(){
+        document.getElementById("artwork_button").classList.add("profile__link--active")
+        document.getElementById("comment_button").classList.remove("profile__link--active")
+        document.getElementById("trade_button").classList.remove("profile__link--active")
+        document.getElementById("hour_button").classList.remove("profile__link--active")
+        document.getElementById("pre").style.display = 'none';
+        document.getElementById("comment_form").style.display = 'none';
+        document.getElementById("trade_form").style.display = 'none';
+        document.getElementById("hour_form").style.display = 'none';
+        document.getElementById("artwork_form").style.display = 'block';
+        document.getElementById("comment_info").style.display = 'none';
+        document.getElementById("trade_info").style.display = 'none';
+        document.getElementById("hour_info").style.display = 'none';
+        document.getElementById("artwork_info").style.display = 'block';
+    }
+
+    $('#boost_time').on('keyup', function(){
+        if (document.getElementById('free').checked){
+            document.getElementById("h_calc").innerHTML = '{% blocktrans %}ფასი: 0 ₾{% endblocktrans %}'
+        } else {
+            var value = document.getElementById('boost_time').value;
+            if (value != '') {
+                document.getElementById("h_calc").innerHTML = '{% blocktrans %}ფასი:{% endblocktrans %} ' + value * {{ settings.h_boost_price }} + ' {% blocktrans %}კრედიტი{% endblocktrans %}'
+            } else {
+                document.getElementById("h_calc").innerHTML = '{% blocktrans %}ფასი: 0 ₾{% endblocktrans %}'
+            }
+        }
+    })
+
+    $('#trade_amount').on('keyup', function() {
+        var value = document.getElementById('trade_amount').value;
+        {% if user.freeTradeAvailable %}        
+        var freeTrade = document.getElementById('freeTrade').checked
+        {% else %}
+        var freeTrade = false;
+        {% endif %}
+        if (freeTrade || value == ''){
+            document.getElementById("t_calc").innerHTML = '{% blocktrans %}ფასი: 0 ₾{% endblocktrans %}';
+            return
+        }
+        var price = value/1000 * {{ settings.t_boost_price }};
+        var floor = Math.floor(value / 10000);
+        if (floor > 0) price -= ((floor * 10) * price) / 100;
+        var textPrice = '{% blocktrans %}ფასი:{% endblocktrans %} ' + price + ' {% blocktrans %}კრედიტი{% endblocktrans %}'
+        if (floor > 0){
+            textPrice = textPrice + ' (' + floor + '0% ფასდაკლება)';
+        }
+        document.getElementById("t_calc").innerHTML = textPrice
+    })
+
+    $('#comment_amount').on('change', function() {
+        {% if user.freeCommentAvailable %}        
+        var freeComment = document.getElementById('freeComment').checked
+        {% else %}
+        var freeComment = false;
+        {% endif %}
+        if (freeComment || this.value == '') {
+            document.getElementById("c_calc").innerHTML = '{% blocktrans %}ფასი: 0 კრედიტი{% endblocktrans %}'
+            return
+        }
+        document.getElementById("c_calc").innerHTML = '{% blocktrans %}ფასი:{% endblocktrans %} ' + (this.value/100) * {{ settings.c_boost_price }} + ' {% blocktrans %}ლარი{% endblocktrans %}'
+    })
+    $('#fav_amount, #like_amount').on('change', function() {
+        {% if user.freeArtworkAvailable %}        
+        var freeArtwork = document.getElementById('freeArtwork').checked
+        {% else %}
+        var freeArtwork = false;
+        {% endif %}
+        if (freeArtwork || this.value == '') {
+            document.getElementById("c_calc").innerHTML = '{% blocktrans %}ფასი: 0 კრედიტი{% endblocktrans %}'
+            return
+        }
+        var price = (($('#fav_amount').val()/250) + ($('#like_amount').val()/250)) * {{ settings.a_boost_price }};
+        document.getElementById("a_calc").innerHTML = '{% blocktrans %}ფასი:{% endblocktrans %} ' + price + ' {% blocktrans %}ლარი{% endblocktrans %}'
+    })
+    function HBoost() {
+        $.post('/boost/hour', {
+            'steam_username': $("#h_steam_username").val(),
+            'steam_password': $("#h_steam_password").val(),
+            'auth_code': $("#h_authcode").val(),
+            'boost_time': $("#boost_time").val(),
+            'games_id': $("#games_id").val(),
+            'free': document.getElementById('free').checked,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        }).always(function (data, status) {
+            bootbox.alert(data.responseText || data)
+        });
+    }
+
+    function TBoost() {
+        var username = $("#t_steam_username").val();
+        var password = $("#t_steam_password").val();
+        var identity_secret = $("#identity_secret").val();
+        var shared_secret = $("#shared_secret").val();
+        var authcode = $('#authcode').val()
+        {% if user.freeTradeAvailable %}        
+        var trade_amount = document.getElementById('freeTrade').checked ? 250 : $('#trade_amount').val();
+        {% else %}
+        var trade_amount = $('#trade_amount').val();
+        {% endif %}
+        if (!document.getElementById('switch_secrets').checked){
+            var payload = {
+                'steam_username': username,
+                'steam_password': password,
+                'authcode': authcode,
+                'trade_amount': trade_amount,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            }
+        } else {
+            var payload = {
+                'steam_username': username,
+                'steam_password': password,
+                'identity_secret': identity_secret,
+                'shared_secret': shared_secret,
+                'trade_amount': trade_amount,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            }
+        }
+        $.post('/boost/trade', payload).always(function (data, status) {
+            bootbox.alert(data.responseText || data)
+        });
+    }
+
+    function CBoost() {
+        {% if user.freeCommentAvailable %}        
+        var comment_amount = document.getElementById('freeComment').checked ? 6 : $('#comment_amount').val();
+        {% else %}
+        var comment_amount = $("#comment_amount").val();
+        {% endif %}
+        var comment = $("#comment").val();
+        var delay = ''; //$("#delay").val();
+        var boost = {
+            'comment_amount': comment_amount,
+            'comment': comment,
+            'delay': delay,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        }
+        $.post('/boost/comment', boost).always(function (data, status) {
+            bootbox.alert(data.responseText || data)
+        });
+    }
+
+    function ABoost() {
+        {% if user.freeArtworkAvailable %}        
+        var like_amount = document.getElementById('freeArtwork').checked ? 10 : $('#like_amount').val();
+        var fav_amount = document.getElementById('freeArtwork').checked ? 10 : $('#fav_amount').val();
+        {% else %}
+        var like_amount = $("#like_amount").val();
+        var fav_amount = $("#fav_amount").val();
+        {% endif %}
+        $.post('/boost/artwork', {
+            'likeAmount': like_amount,
+            'favAmount': fav_amount,
+            'sharedID': $("#artwork").val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        }).always(function (data, status) {
+            bootbox.alert(data.responseText || data)
+        });
+    }
+    
+    function t_confirm(){
+        {% if user.freeTradeAvailable %}        
+        if (document.getElementById('freeTrade').checked) {return TBoost()}
+        {% endif %}
+        if ($("#trade_amount").val() == '') return;
+        if (!document.getElementById('switch_secrets').checked){
+            if ($('#authcode').val() == '') return;
+        } else {
+            if ($("#identity_secret").val() == '' || $("#shared_secret").val() == '') return;
+        }
+        $.get('/boost/price/trade/' + $("#trade_amount").val()).always(function (response, status) {
+            bootbox.dialog({
+                message: response,
+                buttons: {
+                    cancel: {
+                        label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                        callback: function(){
+                            console.log('trade boost cancelled');
+                        }
+                    },
+                    confirm: {
+                        label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                        callback: function(){
+                            TBoost();
+                        }
+                    },
+                }
+            });
+        });
+    }
+    function c_confirm(){
+        {% if user.freeCommentAvailable %}        
+        if (document.getElementById('freeComment').checked) {return CBoost()}
+        {% endif %}
+        $.get('/boost/price/comment/' + $("#comment_amount").val()).always(function (response, status) {
+            bootbox.dialog({
+                message: response,
+                buttons: {
+                    cancel: {
+                        label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                        callback: function(){
+                            console.log('comment boost cancelled');
+                        }
+                    },
+                    confirm: {
+                        label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                        callback: function(){
+                            CBoost();
+                        }
+                    },
+                }
+            })
+        })
+    }
+    function a_confirm(){
+        {% if user.freeArtworkAvailable %}        
+        if (document.getElementById('freeArtwork').checked) {return ABoost()}
+        {% endif %}
+        $.get('/boost/price/artwork/' + $("#fav_amount").val() + '/' + $("#like_amount").val()).always(function (response, status) {
+            bootbox.dialog({
+                message: response,
+                buttons: {
+                    cancel: {
+                        label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                        callback: function(){
+                            console.log('artwork boost cancelled');
+                        }
+                    },
+                    confirm: {
+                        label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                        callback: function(){
+                            ABoost();
+                        }
+                    },
+                }
+            })
+        })
+    }
+    function h_confirm(){
+        if ($("#boost_time").val() == '' || $("#boost_time").val() == 0) return;
+        if (!document.getElementById('free').checked){
+            $.get('/boost/price/hour/' + $("#boost_time").val()).always(function (response, status) {
+                bootbox.dialog({
+                    message: response,
+                    buttons: {
+                        cancel: {
+                            label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                            className: 'btn-danger',
+                            callback: function(){
+                                console.log('hour boost cancelled');
+                            }
+                        },
+                        confirm: {
+                            label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                            className: 'btn-success',
+                            callback: function(){
+                                HBoost();
+                            }
+                        },
+                    }
+                });
+            })
+        } else {
+            HBoost()
+        }
+    }
+    function buy(){
+        bootbox.prompt({
+            title: "{% blocktrans %}რაოდენობა (თითო 1₾){% endblocktrans %}",
+            inputType: 'textarea',
+            buttons: {
+                    cancel: {
+                        label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                    },
+                    confirm: {
+                        label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                    },
+                },
+            callback: function(result) {
+                if (result !== null) {
+                    $.get('/buy/' + result).always(function(data, status){
+                        bootbox.alert(data.responseText || data, function(){ location.reload() })
+                    })
+                }
+                }
+        });
+    }
+    function gems(){
+        bootbox.prompt({
+            title: '{% blocktrans %}შეიყვანეთ Gem-ების რაოდენობა რამდენის დაბრუნებაც გსურთ<br>(დასაბრუნებელი გაქვთ {{ user.gems }}){% endblocktrans %}',
+            inputType: 'textarea',
+            placeholder: '{{ user.gems }}',
+            buttons: {
+                    cancel: {
+                        label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                    },
+                    confirm: {
+                        label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                    },
+                },
+            callback: function(result) {                
+                if (result !== null) {
+                    var plsw8 = bootbox.dialog({
+                        message: '<p class="text-center">{% blocktrans %}იგზავნება{% endblocktrans %} Trade Offer...</p>',
+                        closeButton: false
+                    });
+                    $.get('/return/' + result).always(function(data, status){
+                        plsw8.modal('hide');
+                        bootbox.alert(data.responseText || data, function(){
+                        })
+                    })
+                }
+                }
+        });
+    }
+</script>
+{% endblock body %}

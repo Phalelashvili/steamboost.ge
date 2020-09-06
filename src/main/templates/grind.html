@@ -1,0 +1,374 @@
+{% load i18n %}
+<html class="no-js" lang="en"><head>
+    <meta charset="utf-8">
+    <title>SteamBoost - Grind</title>
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+    <style>
+        .bootbox-input{
+            resize: none
+        }
+        body{
+            background-color: rgb(0, 0, 0);
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            height: 944px;
+            line-height: 24px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 0px;
+            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 0px;
+        }
+        .preview{
+            background-color: rgb(38, 38, 38);
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            height: 54px;
+            line-height: 54px;
+            margin-bottom: 1px;
+            z-index: 100;
+        }
+        .logo{
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            float: left;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 54px;
+            padding-bottom: 0px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 0px;
+        }
+        .logo-a{
+            background-attachment: scroll;
+            background-clip: border-box;
+            background-color: rgba(0, 0, 0, 0);
+            background-image: url("/static/img/logo.png");
+            background-origin: padding-box;
+            background-position: 0% 0%;
+            background-position-x: 0%;
+            background-position-y: 0%;
+            background-repeat: repeat;
+            background-size: 152px 18px;
+            box-sizing: border-box;
+            color: rgb(0, 0, 238);
+            display: block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            height: 18px;
+            line-height: 54px;
+            position: absolute;
+            text-indent: -9999px;
+            top: 18px;
+            width: 152px;
+        }
+        .buttons{
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            float: right;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 54px;
+        }
+        .next{
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            display: inline-block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 54px;
+            padding-bottom: 0px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 0px;
+        }
+        .next-a{
+            background-color: rgb(130, 180, 64);
+            border-bottom-color: rgb(255, 255, 255);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border-bottom-style: none;
+            border-bottom-width: 0px;
+            border-image-outset: 0;
+            border-image-repeat: stretch stretch;
+            border-image-slice: 100%;
+            border-image-source: none;
+            border-image-width: 1;
+            border-left-color: rgb(255, 255, 255);
+            border-left-style: none;
+            border-left-width: 0px;
+            border-right-color: rgb(255, 255, 255);
+            border-right-style: none;
+            border-right-width: 0px;
+            border-top-color: rgb(255, 255, 255);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            border-top-style: none;
+            border-top-width: 0px;
+            box-shadow: rgb(111, 154, 55) 0px 2px 0px 0px;
+            box-sizing: border-box;
+            color: rgb(255, 255, 255);
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 21px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 0px;
+            padding-bottom: 5px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 5px;
+            position: relative;
+            text-align: center;
+            text-decoration: none;
+            text-decoration-color: rgb(255, 255, 255);
+            text-decoration-line: none;
+            text-decoration-style: solid;
+        }
+        .next-a:hover{
+            text-decoration: none;
+        }
+        .return{
+            border-left-color: rgb(51, 51, 51);
+            border-left-style: solid;
+            border-left-width: 1px;
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            display: inline-block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 54px;
+            padding-bottom: 0px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 0px;     
+        }
+        .return-a{
+            background-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            color: rgb(153, 153, 153);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 54px;
+            text-decoration: none;
+            text-decoration-color: rgb(153, 153, 153);
+            text-decoration-line: none;
+            text-decoration-style: solid;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .return-a:hover{
+            text-decoration: none;
+            color: red;
+        }
+        iframe{
+            background-color: rgb(255, 255, 255);
+            border-bottom-color: rgb(84, 84, 84);
+            border-bottom-style: none;
+            border-bottom-width: 0px;
+            border-image-outset: 0;
+            border-image-repeat: stretch stretch;
+            border-image-slice: 100%;
+            border-image-source: none;
+            border-image-width: 1;
+            border-left-color: rgb(84, 84, 84);
+            border-left-style: none;
+            border-left-width: 0px;
+            border-right-color: rgb(84, 84, 84);
+            border-right-style: none;
+            border-right-width: 0px;
+            border-top-color: rgb(84, 84, 84);
+            border-top-style: none;
+            border-top-width: 0px;
+            box-sizing: border-box;
+            color: rgb(84, 84, 84);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            height: 890px;
+            line-height: 24px;
+            width: 100%; 
+            border: 1px;
+        }
+        .cp{
+            left: 50%;
+            text-align: center;
+        }
+        .over{
+            font-size:1em;
+            color:red;
+            position:absolute; 
+            bottom:20px; 
+            left:20px;
+            z-index:2 
+        }
+        .lds-dual-ring {
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+        }
+        .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 46px;
+        height: 46px;
+        margin: 1px;
+        border-radius: 50%;
+        border: 5px solid orange;
+        border-color: orange transparent orange transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+        }
+        @keyframes lds-dual-ring {
+            0% {
+            transform: rotate(0deg);
+            }
+            100% {
+            transform: rotate(360deg);
+            }
+        }
+          
+    </style>
+    <body class="full-screen-preview">
+        <div class="preview" data-view="ctaHeader">
+            <div class="logo">
+                <a class="logo-a" href="/">Steamboost</a>
+            </div>
+            <div class="buttons">
+                <div class="next">
+                    <a class="next-a" onclick="check()">{% blocktrans %}შემდეგი{% endblocktrans %}</a>
+                </div>
+                <div class="return">
+                    <a class="return-a" style="color: red" onclick="help()">{% blocktrans %}დახმარება{% endblocktrans %}</a>
+                </div>
+                <div class="return">
+                    <a class="return-a" href="/">{% blocktrans %}საიტზე დაბრუნება{% endblocktrans %}</a>
+                </div>
+            </div>
+            <div class='cp' style='display: none'>
+                <a id="redirect" title="პროფილზე გადასვლა" style="font-size: 20;text-decoration: none;color: red;" target="_blank" href=""></a>
+                <a onclick="copy('#copythis')" title="დააწექით დასაკოპირებლად" style="font-size: 25;text-decoration: none; color: red; cursor: pointer;" id='copythis'></a>
+            </div>
+        </div>
+        <iframe id="steam" class="full-screen-preview__frame" src="" name="preview-frame" noresize="noresize" data-view="fullScreenPreview" style="height: 890px;" frameborder="0"></iframe>    
+        <div id="response"class="over"></div>
+        <div id="loading" class="lds-dual-ring over"></div>
+    </body>
+    <script>
+        var id, comment;
+        function help(){
+            Cookies.set('help', 'true')
+            bootbox.alert('{% blocktrans %}კრედიტების შოვნა შეიძლება <a style="color: red" onclick="buy()">ყიდვით</a> ან დაგროვებით{% endblocktrans %}', function(){
+                bootbox.alert('{% blocktrans %}დაგროვება ხდება კომენტარების დაწერით ან არტვორკის დალაიქებით/ფავორიტებში დამატებით{% endblocktrans %}', function(){
+                    bootbox.alert('{% blocktrans %}დავალების შესრულების შემდეგ, დააწექით "შემდეგს" და დაგერიცხებათ კრედიტები{% endblocktrans %}', function(){
+                        bootbox.alert('დასაწერი კომენტარის დასაკოპირებლად დააწექით მას', function(){
+                            if (!!window.chrome && !!window.chrome.webstore){
+                                bootbox.alert("{% blocktrans %}დავალებების მარტივად შესასრულებლად საჭიროა{% endblocktrans %} <a style='color: red' target='_blank' href='https://chrome.google.com/webstore/detail/ignore-x-frame-headers/gleekbfjekiniecknbkamfmkohkpodhe'>Extension</a>", function(){bootbox.alert("პრობლემის შემთხვევაში დაგვიკავშირდით <a style='color: red' target='_blank' href='https://discord.gg/GJnbWes'>Discord</a>-ზე")});
+                            } else if (typeof InstallTrigger !== 'undefined'){
+                                bootbox.alert("{% blocktrans %}დავალებების მარტივად შესასრულებლად საჭიროა{% endblocktrans %} <a style='color: red' target='_blank' href='https://addons.mozilla.org/en-US/firefox/addon/ignore-x-frame-options-header'>Add-on</a>", function(){bootbox.alert("პრობლემის შემთხვევაში დაგვიკავშირდით <a style='color: red' target='_blank' href='https://discord.gg/GJnbWes'>Discord</a>-ზე")});
+                            } else {
+                                bootbox.alert("{% blocktrans %}ბრაუზერის ამოცნობა ვერ მოხერხდა, გამოიყენეთ Google Chrome ან Mozilla Firefox{% endblocktrans %}<br>თუ იყენებთ, დააყენეთ Extension<br><a style='color: red' target='_blank' href='https://chrome.google.com/webstore/detail/ignore-x-frame-headers/gleekbfjekiniecknbkamfmkohkpodhe'>Google Chrome<br><br></a><a style='color: red' target='_blank' href='https://addons.mozilla.org/en-US/firefox/addon/ignore-x-frame-options-header'>Mozilla Firefox</a>", function(){bootbox.alert("პრობლემის შემთხვევაში დაგვიკავშირდით <a style='color: red' target='_blank' href='https://discord.gg/GJnbWes'>Discord</a>-ზე")});
+                            }
+                        })
+                    })
+                });
+            });
+        }
+        function buy(){
+            bootbox.prompt({
+                title: "{% blocktrans %}რაოდენობა (თითო{% endblocktrans %} - {{ settings.c_price }}₾)",
+                inputType: 'textarea',
+                buttons: {
+                        cancel: {
+                            label: "{% blocktrans %}გაუქმება{% endblocktrans %}",
+                            className: 'btn-danger',
+                        },
+                        confirm: {
+                            label: "{% blocktrans %}გაგრძელება{% endblocktrans %}",
+                            className: 'btn-success',
+                        },
+                    },
+                callback: function(result) {                
+                    if (result !== null) {
+                        $.get('/buy/' + result, function(data, status){
+                            bootbox.alert(data, function(){ location.reload() })
+                        })                         
+                    }
+                    }
+            });
+        }
+        function check(){
+            if (id == undefined) return next();
+            $('#loading').show();
+            $('.next').hide();
+            document.getElementById('response').innerHTML = '';
+            $.get('/boost/grind/check/' + id, function(response){
+                document.getElementById('response').innerHTML = response;
+                $('#loading').hide();
+                $('.next').show();
+                next()
+            })
+        }
+        function next(){
+            $.getJSON('/boost/grind/next', function(response) {
+                $('.cp').hide() 
+                if (response['success'] == true){
+                    id = response['id'];
+                    if(response['comment'] != undefined){
+                        comment = response['comment'];
+                        document.getElementById('copythis').innerHTML = comment;
+                        document.getElementById('steam').src = "https://steamcommunity.com/profiles/" + id + "?prevent_iframe_caching=" + new Date().getTime() + "#footer";
+                        document.getElementById('redirect').href = document.getElementById('steam').src;
+                        document.getElementById('redirect').innerHTML = 'დააკომენტარეთ';
+                    } else {
+                        document.getElementById('copythis').innerHTML = '';
+                        document.getElementById('redirect').innerHTML = response['text']
+                        document.getElementById('redirect').href = "https://steamcommunity.com/sharedfiles/filedetails?id=" + id + '&prevent_iframe_caching=' + new Date().getTime() + '#ItemControls';
+                        document.getElementById('steam').src = "https://steamcommunity.com/sharedfiles/filedetails?id=" + id + '&prevent_iframe_caching=' + new Date().getTime() + '#ItemControls';
+                        
+                        
+                    }
+                    $('.cp').show() 
+                } else {
+                    bootbox.alert('პროფილები ამოიწურა, მოგვიანებით სცადეთ')
+                    id = undefined;
+                }
+            });
+        }
+        function copy(element) {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(element).text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+          }
+          
+        $(document).ready(function() {
+            $('#loading').hide();
+            next()
+            if (Cookies.get('help') == null){
+                setInterval(function(){
+                    $('.return-a').fadeOut(500).fadeIn(500);
+                }, 1000)
+                help()
+            }
+        });
+    </script>
+</html>

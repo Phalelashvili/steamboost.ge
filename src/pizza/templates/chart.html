@@ -1,0 +1,68 @@
+<html>
+<head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+    // yes, i just imported entire jquery library so i could use .each funtion, javascript is fucking garbage
+    </script>
+    <script type="text/javascript">
+
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+
+            // Create the data table.
+            var url = "/pizza/stats/read";
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+
+                var stats = JSON.parse(this.responseText);
+                var hourlyStats = {};
+
+                for (i = 0; i < 24; i++) {
+                    hourlyStats[i] = 0;
+                }
+
+                $.each(stats, function (key, day) {
+                    $.each(day, function(key, value){
+                        hourlyStats[key] += value;
+                    })
+                })
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'what');
+                data.addColumn('number', 'hr');
+                $.each(hourlyStats, function (key, value) {
+                    data.addRow([key, value]);
+                })
+    
+                // Set chart options
+                var options = {'title':'Pizza Stats',
+                                'width': 1920,
+                                'height': 1080};
+
+                // Instantiate and draw our chart, passing in some options.
+                var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+    </script>
+</head>
+
+<body>
+    <!--Div that will hold the pie chart-->
+    <button onclick="window.open('/pizza/stats/update')">Refresh Data</button>
+    <div id="chart_div"></div>
+</body>
+</html>

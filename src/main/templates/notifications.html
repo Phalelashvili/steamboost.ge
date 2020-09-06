@@ -1,0 +1,178 @@
+{% extends "base.html" %} {% block head %}
+{% load webpush_notifications %}
+{% webpush_header %}
+<title>SteamBoost - Notifications</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<style>
+    html {
+        font-size: 16px;
+    }
+
+    h1 {
+        color: #ffffff;
+    }
+
+    body {
+        color: #ffffff !important;
+        background-color: #1b212e;
+    }
+
+    th, td {
+        color: black;
+    }
+    #webpush-subscribe-button{
+        background-color: rgba(0, 0, 0, 0);
+        background-image: none;
+        border-bottom-color: rgb(45, 133, 10);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-image-outset: 0;
+        border-image-repeat: stretch stretch;
+        border-image-slice: 100%;
+        border-image-source: none;
+        border-image-width: 1;
+        border-left-color: rgb(45, 133, 10);
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right-color: rgb(45, 133, 10);
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-top-color: rgb(45, 133, 10);
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border-top-style: solid;
+        border-top-width: 1px;
+        box-sizing: border-box;
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+        display: inline-block;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-feature-settings: normal;
+        font-kerning: auto;
+        font-language-override: normal;
+        font-optical-sizing: auto;
+        font-size: 14px;
+        font-size-adjust: none;
+        font-stretch: 100%;
+        font-style: normal;
+        font-variant: normal;
+        font-variant-alternates: normal;
+        font-variant-caps: normal;
+        font-variant-east-asian: normal;
+        font-variant-ligatures: normal;
+        font-variant-numeric: normal;
+        font-variant-position: normal;
+        font-variation-settings: normal;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 20px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        outline-color: rgb(255, 255, 255);
+        outline-style: none;
+        outline-width: 0px;
+        overflow: visible;
+        overflow-x: visible;
+        overflow-y: visible;
+        padding-bottom: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 6px;
+        text-align: center;
+        text-decoration: none;
+        text-decoration-color: rgb(255, 255, 255);
+        text-decoration-line: none;
+        text-decoration-style: solid;
+        text-transform: none;
+        touch-action: manipulation;
+        vertical-align: middle;
+        white-space: nowrap;
+        -moz-appearance: button;
+        -moz-user-select: none;
+    }
+</style>
+{% endblock head %} {% block body %}
+<div class="container">
+    {% if user.is_staff %}
+    <div class="text-center">
+        <div style="display:inline-block">
+            <form>
+                <br>
+                <label for="steam64id">Steam64id:</label>
+                <input name="steam64id" id="steam64id" placeholder="0 = ყველა" class="form-control" required>
+                <br>
+                <label for="group">Group:</label>
+                <input name="group" id="group" placeholder="" class="form-control" required>
+                <br>
+                <label for="message">შეტყობინება:</label>
+                <input name="message" id="message" class="form-control" required>
+                <br>
+                <button type="button" class="btn btn-success" onclick="send()">გაგზავნა</button>
+            </form>
+        </div>
+    </div><br><br><br><br><br>
+    {% endif %}
+<div class="text-center">
+        {% webpush_button %}
+    <div style="display:inline-block">
+    </div>
+</div>
+<table id="notifications" class='table table-striped dataTable no-footer'>
+    <thead>
+        <th>ID</th>
+        <th>დრო</th>
+        <th>შეტყობინება</th>
+    </thead>
+    <tbody>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tbody>
+    <tfoot>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tfoot>
+</table>
+</div>
+<script>
+    function send(){
+        $.post('/realadminpanel/ajax/notifications', {
+            'steam64id': $('#steam64id').val(),
+            'group': $('#group').val(),
+            'message': $('#message').val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        }, function(data){
+            bootbox.alert(data)
+        })
+
+    }
+    $(document).ready( function () {
+        var table = $('#notifications').DataTable({
+            "ajax": {
+                "url": '/ajax/notifications',
+            },
+            "columns": [
+                    { "data": "id" },
+                    { "data": "time" },
+                    { "data": "message" },
+                ],
+                "order": [
+                    [ 0, "desc" ]
+                ],
+                "oLanguage": {
+                    "sEmptyTable": "ცარიელია"
+                    },
+        });
+
+        setInterval( function () {
+            table.ajax.reload();
+        }, 60000 );   
+    });
+</script>
+{% endblock body %}

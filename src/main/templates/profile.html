@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block head %}
+<title>SteamBoost - Profile</title>
+<style>
+    .api__main {
+        border-top-color: rgb(46, 55, 71);
+        border-top-style: solid;
+        border-top-width: 1px;
+        box-sizing: border-box;
+        color: rgb(182, 184, 186);
+        display: none;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        height: auto;
+        letter-spacing: normal;
+        line-height: 16px;
+        padding-bottom: 40px;
+        padding-left: 100px;
+        padding-right: 100px;
+        padding-top: 40px;
+        text-size-adjust: 100%;
+        width: 100%;
+        -webkit-box-direction: normal;
+        -webkit-font-smoothing: antialiased;
+    }
+    .form-control, .api__input-paragraph{
+        font-size: 16px;
+    }
+    .calc{
+        font-size: 14px;
+    }
+</style>
+{% endblock head %} {% block body %}
+<main class="l-main-content">
+    <router-outlet></router-outlet><profile-cmp><div class="profile__container profile">
+    <div class="profile__main">
+        <router-outlet></router-outlet><initpage-cmp><div class="init-page">
+    <ul class="init-page__profile-list">
+        <li class="init-page__profile-item init-page__item-profile">
+            <div class="init-page__user-container">
+                <figure class="init-page__user-figure">
+                    <img class="init-page__user-img" src="{{ user.avatar }}" width="94" height="94">
+                </figure>
+                <div class="init-page__user-info">
+                    <p class="init-page__user-name">{{ user.first_name }}</p>
+                    <p class="init-page__deals-number warm-color">{{ user.last_name }}</p>
+                </div>
+
+            </div>
+
+            <div class="btn-container">
+                <a class="init-page__link-history" href="/history">{% blocktrans %}ისტორია{% endblocktrans %}</a>
+            </div>
+        </li>
+        <li class="init-page__profile-item init-page__item-balance">
+            <div class="init-page__title-container">
+                <h3 class="init-page__title">
+                    {% blocktrans %}ბალანსი{% endblocktrans %}
+                </h3>
+            </div>
+            <p class="init-page__cash">
+                {{ user.balance }}
+            </p>
+            <a class="init-page__btn-withdraw btn-accent" href="/deposit">
+                {% blocktrans %}დეპოზიტი{% endblocktrans %}
+            </a>
+        </li>
+        <li class="init-page__profile-item init-page__item-balance">
+            <div class="init-page__title-container">
+                <h3 class="init-page__title">
+                    {% blocktrans %}კრედიტები{% endblocktrans %}
+                </h3>
+            </div>
+            <p class="init-page__cash">
+                {{ user.credits }}
+            </p>
+            <a class="init-page__btn-withdraw btn-accent" onclick="buy()">
+                {% blocktrans %}ყიდვა{% endblocktrans %}
+            </a>
+        </li>
+    </ul>
+
+    <div class="init-page__loyalty">
+        <div class="init-page__loyalty-bonus">
+            <h2 class="init-page__mailout-title">
+                Trade Link
+            </h2>
+            <div class="init-page__loyalty-container">
+                <div class="init-page__loyalty-info">
+                    <div class="init-page__lvl init-page__lvl--rank init-page__bonus-avatar2--active">
+                        <div class="init-page__text-container init-page__text-container--bonus">
+                            <p class="init-page__loyalty-text">{% blocktrans %}ახლანდელი{% endblocktrans %} Trade Link</p>
+                        </div>
+                        <div class="init-page__text-container">
+                            <p class="init-page__loyalty-percent">{{ user.trade_link }}</p>
+                        </div>
+                    </div>
+                    <a class="init-page__btn-withdraw btn-accent init-page__btn-loyalty" onclick="set_tlink()">
+                        {% blocktrans %}შეცვლა{% endblocktrans %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="init-page__referral">
+            <h2 class="init-page__mailout-title">
+                {% blocktrans %}რეფერალები{% endblocktrans %}
+            </h2>
+            <div class="init-page__referral-container">
+                <div class="init-page__referral-info">
+                    <div class="init-page__lvl-referral">
+                        <div class="init-page__text-container">
+                            <p class="init-page__referral-text">{% blocktrans %}შენი რეფერალ კოდი{% endblocktrans %} </p>
+                            <p class="init-page__referral-percent">{{ user.username }}</p>
+                        </div>
+                        <div class="init-page__text-container">
+                            <p class="init-page__referral-text">{% blocktrans %}რეფერალ ლინკი{% endblocktrans %} </p>
+                            <p class="init-page__referral-percent">https://steamboost.ge/?ref={{ user.username }}</p>
+                        </div>
+                        <div class="init-page__text-container">
+                            <p class="init-page__referral-text">{% blocktrans %}დაგროვებული{% endblocktrans %}</p>
+                            <p class="init-page__referral-percent">{{ user.referral_credits }} კრ.</p>
+                        </div>
+                    </div>
+                    <a class="init-page__btn-withdraw btn-accent init-page__btn-referral" onclick="ref()">
+                        {% blocktrans %}რეფერალის შეყვანა{% endblocktrans %}
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+</initpage-cmp>
+    </div>
+</div>
+</profile-cmp>
+    
+</main>
+<script>
+    function buy(){
+        bootbox.prompt({
+            title: "{% blocktrans %}რაოდენობა (თითო 1₾){% endblocktrans %}",
+            inputType: 'textarea',
+            buttons: {
+                    cancel: {
+                        label: "{% blocktrans %} გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                    },
+                    confirm: {
+                        label: "{% blocktrans %} გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                    },
+                },
+            callback: function(result) {                
+                if (result !== null) {
+                    $.get('/buy/' + result, function(data, status){
+                        bootbox.alert(data, function(){ location.reload() })
+                    })                         
+                }
+                }
+        });
+    }
+    function set_tlink(){
+        var parameters = {
+            title: "<a style='color: #e50d0d' href='https://steamcommunity.com/id/me/tradeoffers/privacy#trade_offer_access_url' target='_blank'>იპოვეთ </a>Trade Link <i class='fas fa-sliders-h'>",
+            inputType: 'textarea',
+            buttons: {
+                    cancel: {
+                        label: "{% blocktrans %}გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                    },
+                    confirm: {
+                        label: "{% blocktrans %}გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                    },
+                },
+            callback: function(result) {                
+                if (result !== null) {
+                    $.post('/set_trade_link', {'trade_link': result, 'csrfmiddlewaretoken': '{{ csrf_token }}'} ,function(data, status){
+                        bootbox.alert(data, function(){ location.reload() })
+                    })
+                }
+                }
+            };
+
+        bootbox.prompt(parameters);
+    }
+    function ref(){
+        var parameters = {
+            title: "{% blocktrans %}კოდის შეყვანისას თქვენ დაგერიცხებათ{% endblocktrans %} {{ settings.referral_reward_user }} {% blocktrans %}კრედიტი, ავტორს{% endblocktrans %} {{ settings.referral_reward }}",
+            inputType: 'textarea',
+            buttons: {
+                    cancel: {
+                        label: "{% blocktrans %}გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                    },
+                    confirm: {
+                        label: "{% blocktrans %}გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                    },
+                },
+            callback: function(result) {                
+                if (result !== null) {
+                    $.get('/ref/' + result ,function(data, status){
+                        bootbox.alert(data, function(){ location.reload() })
+                    })
+                }
+                }
+            };
+
+        bootbox.prompt(parameters);
+    }
+</script>
+{% endblock body %}

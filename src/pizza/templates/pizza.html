@@ -1,0 +1,288 @@
+﻿{% extends "base.html" %} {% block head %}
+{% load webpush_notifications %}
+{% webpush_header %}
+<title>Pizza [Steamboost.ge]</title>
+<style>
+
+    .new {
+        color: red !important;
+    }
+
+    .filterable {
+        margin-top: 15px;
+    }
+
+        .filterable .panel-heading .pull-right {
+            margin-top: -20px;
+        }
+
+        .filterable .filters input[disabled] {
+            background-color: transparent;
+            border: none;
+            cursor: auto;
+            box-shadow: none;
+            padding: 0;
+            height: auto;
+        }
+
+            .filterable .filters input[disabled]::-webkit-input-placeholder {
+                color: #333;
+            }
+
+            .filterable .filters input[disabled]::-moz-placeholder {
+                lor: #333;
+            }
+
+            .filterable .filters input[disabled]:-ms-input-placeholder {
+                color: #333;
+            }
+
+    tr.strikeout td:after {
+        content: "\00B7";
+        font-size: 1px;
+    }
+
+    tr.strikeout td:before {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        border-bottom: 1px solid #111;
+        width: 100%;
+    }
+
+    span {
+        color: black;
+        font-size: 15px
+    }
+
+    td {
+        font-size: 15px;
+        white-space:pre
+    }
+
+    #webpush-subscribe-button {
+        background-color: rgba(0, 0, 0, 0);
+        background-image: none;
+        border-bottom-color: rgb(45, 133, 10);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-image-outset: 0;
+        border-image-repeat: stretch stretch;
+        border-image-slice: 100%;
+        border-image-source: none;
+        border-image-width: 1;
+        border-left-color: rgb(45, 133, 10);
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right-color: rgb(45, 133, 10);
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-top-color: rgb(45, 133, 10);
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border-top-style: solid;
+        border-top-width: 1px;
+        box-sizing: border-box;
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+        display: inline-block;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-feature-settings: normal;
+        font-kerning: auto;
+        font-language-override: normal;
+        font-optical-sizing: auto;
+        font-size: 14px;
+        font-size-adjust: none;
+        font-stretch: 100%;
+        font-style: normal;
+        font-variant: normal;
+        font-variant-alternates: normal;
+        font-variant-caps: normal;
+        font-variant-east-asian: normal;
+        font-variant-ligatures: normal;
+        font-variant-numeric: normal;
+        font-variant-position: normal;
+        font-variation-settings: normal;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 20px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        outline-color: rgb(255, 255, 255);
+        outline-style: none;
+        outline-width: 0px;
+        overflow: visible;
+        overflow-x: visible;
+        overflow-y: visible;
+        padding-bottom: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 6px;
+        text-align: center;
+        text-decoration: none;
+        text-decoration-color: rgb(255, 255, 255);
+        text-decoration-line: none;
+        text-decoration-style: solid;
+        text-transform: none;
+        touch-action: manipulation;
+        vertical-align: middle;
+        white-space: nowrap;
+        -moz-appearance: button;
+        -moz-user-select: none;
+    }
+</style>
+<link rel="stylesheet" href="/static/css/bsstyle.css" type="text/css" />
+<link rel="stylesheet" href="/static/css/style.css" type="text/css" />
+{% endblock head %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="align-items-center">
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-center">
+                                    {% webpush_button %}
+                                    <button style="color:#000;" onclick="window.open('/pizza/lock/release')">release lock</button>
+                                    <a href="https://discordapp.com/channels/679087363372089374/" target="_blank"><h1>ამოწურვის თარიღი - {{ user.extension_avatarFinder }}</h1></a>
+                                    <a href="https://discordapp.com/channels/679087363372089374/" target="_blank"><h1 style="color: orange" >24 საათის განმავლობაში საიტზე შემოხვედით {{ visitCount }}-ჯერ</h1></a>
+                                    {% if steamDown != None %}
+                                    <a href="https://steamstat.us/" target="_blank"><h1 style="color: red;" title="CS:GOს ინვენტარი გადატვირთულია და ლისტინგები არ იდება. სტატუსი ნახლდება ყოველ 2 წუთში">CS:GO Player Inventories - {{ steamDown }}</h1></a>
+                                    {% endif %}
+                                    {% if lockTime != None %}
+                                    <a href="https://discordapp.com/channels/679087363372089374/" target="_blank"><h1 style="color: cyan">High Tierზე დრო დარჩა {{ lockTime }}</a>
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="panel panel-primary filterable col-sm">
+                                            <table class="table table-striped table-condensed btn-table">
+                                                <thead>
+                                                    <tr class="filters">
+                                                        <th>
+                                                            <span>Pic</span>
+                                                        </th>
+                                                        <th>
+                                                            <span>Item</span>
+                                                        </th>
+                                                        <th>
+                                                            <span>Price</span>
+                                                        </th>
+                                                        <th>
+                                                            <span>Details</span>
+                                                        </th>
+                                                        <th>
+                                                            <span>Time</span>
+                                                        </th>
+                                                        <th>
+                                                            <span>Avatar</span>
+                                                        </th>
+                                                        <th>
+                                                            <span></span>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for listing in listings %}
+                                                    <tr style="background-color:#2e2e2e" itemid="{{ listing.id }}" game="{{ listing.game }}">
+                                                        <td><img style="font-size: 10px; border: 2px solid;border-color:#{{ listing.color }}; max-width: 100px" class="rounded-circle" alt="{{ listing.name }}" src="//steamcommunity-a.akamaihd.net/economy/image/{{ listing.icon }}" width="60" height="60"></td>
+                                                        <td><a href="{{ listing.item }}" target="_blank" style="font-size: 15px">{{ listing.name }}</a></td>
+                                                        <td>{{ listing.price }}</td>
+                                                        <td>{{ listing.details }}</td>
+                                                        <td>{{ listing.time }}</td>
+                                                        <td>
+                                                            {% for avatar in listing.avatars %}
+                                                            <a href="https://steamid.uk/avatar-finder/{{ avatar.avatar }}" target="_blank"><img class="avatar" fetched="false" avatar="{{ avatar.avatar }}" src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ avatar.avatar }}_full.jpg" style="max-width: 100px"></a>{% if listing.count != 0 %}<a href="{{ avatar.steamboost }}" target="_blank">{{ avatar.count }}</a>{% endif %}{% if listing.count == 1 %}<br /><a href="https://steamcommunity.com/profiles/{{ listing.steamid }}" target="_blank">steam</a>{% endif %}<br />
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td><button type="button" class="btn btn-danger remove">Remove</button></td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <iframe src="/pizza/stats/chart" width="1920" height="1080" frameBorder="0"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.remove').on('click', function () {
+        var parent = this.parentNode.parentNode;
+        var id = parent.attributes['itemid'].value;
+        $.get('/pizza/remove/' + id, function (response, status) {
+            if (response.success) {
+                parent.remove()
+            }
+        })
+        
+    })
+
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    window.addEventListener('focus', function () {
+        var items = $('tr');
+        var lastItem = getCookie('lastItem');
+
+        if (lastItem != null) {
+            for (var i = 1; i < items.length; i++) {
+                if (items[i].attributes['itemid'].value > lastItem) {
+                    $(items[i]).addClass('new');
+                } else {
+                    break;
+                }
+
+            }
+        }
+
+        setCookie('lastItem', $('tr')[1].attributes['itemid'].value, 69)
+
+    });
+    $('.avatar').hover(async function () { // yes, i'm mixing jquery and vanilla js, because fuck both of them
+        if (this.attributes["fetched"].value == "true") {
+            return
+        }
+        $(this).attr("fetched", true);
+
+        var url = "https://steamboost.ge/extension/avatarApi?avatar=" + this.attributes.avatar.value;
+        url += "&game=" + this.parentElement.parentElement.parentElement.attributes.game.value;
+        var response = await fetch(url);
+        var html = await response.text();
+
+        var div = document.createElement('div');
+        $(div).html(html)
+        div.style = "font-size: 10px; line-height: 3px"
+
+        this.parentElement.append(div);
+    })
+</script>
+{% endblock body %}

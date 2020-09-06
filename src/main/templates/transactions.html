@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block head %}
+<title>SteamBoost - Transactions</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+{% endblock head %}
+{% block body %}
+<br><br><br><br>
+<div class="container">
+    <br><br><br>
+    <table id='transactions' class='table table-striped dataTable no-footer' style="width:100%">
+        <thead>
+            <th>#</th>
+            <th>Steam64ID</th>
+            <th>სახელი</th>
+            <th>საიტი</th>
+            <th>დასრულებული</th>
+            <th>Refunded</th>
+            <th>დრო</th>
+        </thead>
+        <tbody>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tbody>
+        <tfoot>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tfoot>
+    </table>    
+</div>
+<script>
+    $(document).ready( function () {
+        var table = $('#transactions').DataTable( {
+            "ajax": {
+                "url": '/realadminpanel/ajax/transactions',
+            },
+            "columns": [
+                    { "data": "id" },
+                    { "data": "user" },
+                    { "data": "name" },
+                    { "data": "website" },
+                    { "data": "completed" },
+                    { "data": "refunded" },
+                    { "data": "time" }
+                ],
+                "order": [
+                    [ 0, "desc" ]
+                ]
+        });
+       
+        $('#transactions tbody').on('click', 'tr', function () {
+            id = table.row(this).data()['id'];
+            window.location.href = '/realadminpanel/transactions/' + id;
+        });
+        setInterval( function () {
+            table.ajax.reload();
+        }, 3000 );   
+    });
+    </script>
+{% endblock body %}

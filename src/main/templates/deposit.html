@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block head %}
+<title>SteamBoost - Deposit</title>
+{% block deposit_active %}
+header__menu-link--active
+{% endblock %}
+<style>
+    .payment__cash-btn:disabled{
+        background-color: #e41212a1;
+    }
+    label {
+        box-sizing: border-box;
+        color: rgb(189, 189, 189);
+        cursor: pointer;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 22px;
+        list-style-type: none;
+        padding-right: 55px;
+        position: relative;
+        -moz-user-select: none;
+    }
+    .tf2_selectable_skin{
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        box-sizing: border-box;
+        color: rgb(210, 210, 210);
+        cursor: pointer;
+        font-family: SegoeUI, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        height: 95px;
+        letter-spacing: normal;
+        line-height: 22px;
+        list-style-type: none;
+        margin-bottom: 7px;
+        position: relative;
+        width: 95px;
+        z-index:
+    }
+</style>
+{% endblock head %}
+{% block body %}
+<br><br>
+<app ng-version="5.2.10"><app-root>
+<main class="l-main-content">
+<logged-cmp>
+<ul class="l-main-page__inner">
+    <li class="l-main-page__col l-main-page l-main-page--inventory">
+        <h4 class="main-page__heading  main-page__heading--inventory">
+            {% blocktrans %}ინვენტარი{% endblocktrans %}</h4>
+    </li>
+    <li class="l-main-page__col l-main-page l-main-page--payment">
+        <h4 class="main-page__heading  main-page__heading--payment">
+            {% blocktrans %}შეტანა{% endblocktrans %}</h4>
+    </li>
+    <li class="l-main-page__col  main-page__col  main-page__col--content main-page__col--inventory">
+        <div id="switch">
+        {% if pending_trade %}
+        <a id='statusCheck' style="color: red; font-size:20; float:right" onclick='statusCheck()'>{% blocktrans %}eMoney დეპოზიტის სტატუსის შემოწმება{% endblocktrans %}</a><br>
+        {% else %}
+        <a style="color: red; font-size:25; float:right" onclick="emoney()">{% blocktrans %}ბალანსის შევსება eMoney.ge-დან{% endblocktrans %}</a><br>
+        {% endif %}
+            <input class="inventory__checkbox ng-untouched ng-valid ng-dirty" id="game_cs" style="display: none;" type="checkbox" onchange='load()'>
+            <label class="inventory__custom-select" for="game_cs">TF2 Keys</label>
+            <br>
+        </div>
+        <div id="select_all_div">
+            <input onchange="select_all()" class="inventory__checkbox ng-untouched ng-valid ng-dirty" id="select_all" style="display: none;" type="checkbox" autocomplete="off">
+            <label class="inventory__custom-select" for="select_all">{% blocktrans %}ყველას მონიშვნა{% endblocktrans %}</label>
+        </div>
+        <div id='inventory' class="inventory">
+
+        </div>
+    </li>
+    <li class="l-main-page__col  main-page__col  main-page__col--content main-page__col--cash">
+        <div class="cash-offer">
+            <div>
+                <hr class="cash-offer__divider">
+                <div class="cash-offer__finance-container">
+
+                    <div class="cash-offer__price-container">
+                        <div class="cash-offer__discount-wrap"><p class="cash-offer__discount-sum">{% blocktrans %}ფასი{% endblocktrans %}</p>
+                        </div>
+                        <p id='price' class="cash-offer__price">0 ₾</p>
+                    </div>
+                </div>
+            </div>
+            <button id='thebutton' class="payment__cash-btn" disabled="">{% blocktrans %}შეტანა{% endblocktrans %}</button>
+        </div>
+    </li>
+</ul>
+<div id='warnings'>
+    {% if trade_link == 'false' %}
+    <div class="popup-attention popup-attention__show">
+        <img alt="attention" class="popup-attention__img" src="/static/img/attention.png">
+
+        <img alt="close" class="popup-attention__close-icon" src="/static/img/close.png">
+        <h3 class="popup-attention__header">
+            {% blocktrans %}ყურადღება!{% endblocktrans %}
+        </h3>
+        <p class="popup-attention__paragraph">
+            {% blocktrans %}თქვენ არ გაქვთ დაყენებული Trade Link{% endblocktrans %}<br>
+            <a style="color: red" href="/profile">{% blocktrans %}დააყენეთ{% endblocktrans %}</a> Trade Link
+        </p>
+    </div>
+</div>
+{% endif %}
+</logged-cmp>
+</game-page-loggedin>
+</main>
+</app-root>
+</app>
+<script>
+    function statusCheck(){
+        var plsw8 = bootbox.dialog({
+            message: '<p class="text-center">. . .</p>',
+            closeButton: false
+        });
+        $.get("/deposit/emoney", function(data, status){
+            plsw8.modal('hide');
+            bootbox.alert(data, function(){
+                location.reload()
+            })
+        })
+    }
+    setInterval(function(){
+        $('#statusCheck').fadeOut(500).fadeIn(500);
+    }, 1000)
+
+    function emoney(){
+        bootbox.prompt({
+            title: "{% blocktrans %}ანგარიშის ნომერი{% endblocktrans %}",
+            inputType: 'textarea',
+            buttons: {
+                    cancel: {
+                        label: "{% blocktrans %}გაუქმება{% endblocktrans %}",
+                        className: 'btn-danger',
+                    },
+                    confirm: {
+                        label: "{% blocktrans %}გაგრძელება{% endblocktrans %}",
+                        className: 'btn-success',
+                    },
+                },
+            callback: function(identifier) {                
+                if (identifier !== null) {
+                    bootbox.prompt({
+                        title: "{% blocktrans %}რაოდენობა{% endblocktrans %} (₾)",
+                        inputType: 'textarea',
+                        buttons: {
+                                cancel: {
+                                    label: "{% blocktrans %}გაუქმება{% endblocktrans %}",
+                                    className: 'btn-danger',
+                                },
+                                confirm: {
+                                    label: "{% blocktrans %}გაგრძელება{% endblocktrans %}",
+                                    className: 'btn-success',
+                                },
+                            },
+                        callback: function(amount) {                
+                            if (amount !== null) {
+                                var plsw8 = bootbox.dialog({
+                                    message: '<p class="text-center">. . .</p>',
+                                    closeButton: false
+                                });
+                                $.post('/deposit/emoney', {
+                                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                                    'identifier': identifier,
+                                    'amount': amount
+                                }, function(data, status){
+                                    plsw8.modal('hide');
+                                    bootbox.alert(data, function(){
+                                        location.reload()
+                                    })
+                                })                     
+                            }
+                        }
+                    });                   
+                }
+                }
+            });
+    }
+
+    function load(){
+        $('#select_all_div').hide()
+        var link = document.getElementById('game_cs').checked ? '?tf2_keys=true' : ''
+        $.get('/ajax/inventory' + link,
+            function(data){
+                if (data == 'private'){
+                    $('#warnings').append('<div class="popup-attention popup-attention__show"><img alt="attention" class="popup-attention__img" src="/static/img/attention.png"><img alt="close" class="popup-attention__close-icon" src="/static/img/close.png"><h3 class="popup-attention__header">შეცდომა!</h3><p class="popup-attention__paragraph">თქვენი პროფილი არის Private <br> შეცვალეთ სტიმის <a href="https://steamcommunity.com/id/me/edit/settings/" target="_blank">სეთინგებში</a></p></div>')
+                } else {
+                    $('#inventory').empty();
+                    $('#inventory').append(data);
+                }
+            }
+        )
+        $('#select_all_div').show()
+    }
+    function select_all(){
+        var all_selected = document.getElementById('select_all').checked;
+        var total_price = 0;
+        var items_to_send_csgo = [];
+        if (all_selected != false){
+            $('.selectable_skin').each(function(){
+                $(this).addClass('skin__inner--is-chosen');
+                total_price += Number($(this).attr('price'));
+                items_to_send_csgo.push($(this).attr('skin_id'));
+                all_selected = true;
+             });
+             $('.tf2_selectable_skin').each(function(){
+                $(this).addClass('skin__inner--is-chosen');
+                total_price += Number($(this).attr('price'));
+                items_to_send_tf2.push($(this).attr('skin_id'));
+                all_selected = true;
+            });
+            update_price();
+        } else {
+            $('.selectable_skin').removeClass('skin__inner--is-chosen');
+            total_price = 0;
+            items_to_send_csgo = [];
+            all_selected = false;
+            $('.tf2_selectable_skin').removeClass('skin__inner--is-chosen');
+            total_price = 0;
+            items_to_send_tf2 = [];
+            all_selected = false;
+            update_price();
+        }
+    }
+    var items_to_send_csgo = [];
+    var items_to_send_tf2 = [];
+    var total_price = 0;
+    var all_selected = false;
+    $('#select_all_div').hide();
+    $('#thebutton').attr('disabled', '')
+    function update_price(){
+        $('#price').html(total_price.toFixed(2) + ' ₾')
+        if (items_to_send_csgo.length == 0 && items_to_send_tf2 == 0){
+            $('#thebutton').attr('disabled', '')
+        } else {
+            $('#thebutton').removeAttr('disabled')
+        }
+    };
+    $(document).on('click', '.selectable_skin',  function(){
+        id = $(this).attr('skin_id');
+        price = Number($(this).attr('price'));
+        if ($(this).hasClass('skin__inner--is-chosen')){
+            this.classList.remove('skin__inner--is-chosen');
+            index = items_to_send_csgo.indexOf(id)
+            items_to_send_csgo. splice(index, 1);
+            total_price -= price
+            update_price()
+        } else {
+            this.classList.add('skin__inner--is-chosen')
+            items_to_send_csgo. push(id)
+            total_price += price
+            update_price()
+        }
+    });
+    $(document).on('click', '.tf2_selectable_skin',  function(){
+        id = $(this).attr('skin_id');
+        price = Number($(this).attr('price'));
+        if ($(this).hasClass('skin__inner--is-chosen')){
+            this.classList.remove('skin__inner--is-chosen');
+            index = items_to_send_tf2.indexOf(id)
+            items_to_send_tf2.splice(index, 1);
+            total_price -= price
+            update_price()
+        } else {
+            this.classList.add('skin__inner--is-chosen')
+            items_to_send_tf2.push(id)
+            total_price += price
+            update_price()
+        }
+    });
+    $('#thebutton').click(function(){
+        var plsw8 = bootbox.dialog({
+            message: '<p class="text-center">{% blocktrans %}იგზავნება{% endblocktrans %} Trade Offer...</p>',
+            closeButton: false
+        });
+        $.post(window.location.href, {'csgo_item_list': items_to_send_csgo.join(), 'tf2_item_list': items_to_send_tf2.join(), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            function(data){
+                plsw8.modal('hide');
+                bootbox.alert(data)
+            }
+        );
+    })
+    $(document).ready(function(){
+        bootbox.alert('ფულის დახარჯვა შეგიძლიათ მხოლოდ ბუსტზე, ნაღდ ფულზე გატანა დროებით გათიშულია');
+        load()
+    })
+</script>
+{% endblock body %} 

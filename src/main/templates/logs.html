@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block head %}
+<title>SteamBoost - Logs</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>{% endblock head %}
+{% block body %}
+<div class="container">
+    <br><br><br>
+    <table id='logs' class='table table-striped dataTable no-footer' style="width:100%">
+        <thead>
+            <th>ID</th>
+            <th>დრო</th>
+            <th>მომხმარებელი</th>
+            <th>სერვისი</th>
+            <th>დეტალები</th>
+        </thead>
+        <tbody>
+            <td class="ID"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tbody>
+        <tfoot>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tfoot>
+    </table>    
+</div>
+<script>
+    $(document).ready( function () {
+        var table = $('#logs').DataTable( {
+            "ajax": {
+                "url": '/realadminpanel/ajax/logs',
+            },
+            "columns": [
+                    { "data": "id" },
+                    { "data": "time" },
+                    { "data": "user" },
+                    { "data": "service" },
+                    { "data": "details" },
+                ],
+                "order": [
+                    [ 0, "desc" ]
+                ]
+        } );
+
+        
+        $('#logs tbody').on('click', 'tr', function () {
+            username = table.row(this).data()['user'];
+            var win = window.open('https://steamcommunity.com/profiles/' + username, '_blank');
+            win.focus();
+        });
+        setInterval( function () {
+            table.ajax.reload();
+        }, 60000 );   
+    });
+    function autoResize(id){
+        var newheight;
+        var newwidth;
+        if(document.getElementById)
+        {
+            newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
+            newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
+        }
+        document.getElementById(id).height= (newheight) + "px";
+        document.getElementById(id).width= (newwidth) + "px";
+    } 
+</script>
+{% endblock body %}

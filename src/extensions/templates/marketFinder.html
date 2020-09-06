@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Market Finder</title>
+<style>
+.userList{
+    color: white
+}
+.userList:hover{
+    color: orange
+}
+</style>
+{% endblock head %}
+{% block body %}
+<div class="container" style="margin-bottom:5%; margin-top:5%; line-height: 3; font-size: 20px; text-align: center">
+    {% for avatar in pizza %}
+    <a class='userList' style="color: orange">{{ listing.name }} ({{ listing.price }})</a><br>
+    {% endfor %}
+    <img src="https://steamcommunity-a.akamaihd.net/market/image/{{ avatar }}/avatar.jpg" style="max-width: 32px;"><br>
+    {% for profile in profiles %}
+    <a class='userList' href="https://steamcommunity.com/profiles/{{ profile.steam64id }}" target="_blank" style="color: {% if profile.status == 'online' %}green{%else%}red{%endif%}">{{ profile.name }} {{ value.joined }} ~{{ profile.match }}%</a><br>
+    {% endfor %}
+</div>
+{% if cached %}
+<script>
+console.log("cached")
+</script>
+{% endif %}
+{% endblock body %}

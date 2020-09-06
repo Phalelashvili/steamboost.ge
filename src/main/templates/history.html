@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block head %}
+<title>SteamBoost - History</title>
+<style>
+	h1{
+		color: #ffffff;
+	}
+	body{
+		background-color: #1b212e;
+	}
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+{% endblock head %}
+{% block body %}
+<div class="container">
+	<h1 style="text-align: center">{% blocktrans %}შემოტანილი{% endblocktrans %}</h1><br><br><br>
+	<table id='deposited' class='table table-striped dataTable no-footer'>
+		<thead>
+			<th>{% blocktrans %}თანხა{% endblocktrans %}</th>
+			<th>{% blocktrans %}დრო{% endblocktrans %}</th>
+			<th>{% blocktrans %}უსაფრთხოების კოდი{% endblocktrans %}</th>
+		</thead>
+		<tbody>
+			<td style="color: lime"></td>
+			<td></td>
+			<td></td>
+		</tbody>
+        <tfoot>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tfoot>
+	</table>
+	<br><br><br><br><br><br>
+	<h1 style="text-align: center">{% blocktrans %}გატანილი{% endblocktrans %}</h1><br><br><br>
+	<table id='withdrawn' class='table table-striped dataTable no-footer'><thead>
+		<th>{% blocktrans %}თანხა{% endblocktrans %}</th>
+		<th>{% blocktrans %}დრო{% endblocktrans %}</th>
+		<th>{% blocktrans %}უსაფრთხოების კოდი{% endblocktrans %}</th>
+		<th>{% blocktrans %}მისამართი{% endblocktrans %}</th>
+	</thead>
+		<tbody>
+			<td style="color: red"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tbody>
+        <tfoot>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tfoot>
+	</table>
+	<br><br><br><br><br><br>
+	<h1 style="text-align: center">{% blocktrans %}აბუსტული{% endblocktrans %}</h1><br><br><br>
+	<table id='boosted' class='table table-striped dataTable no-footer'>
+		<thead>
+			<th>{% blocktrans %}ფასი{% endblocktrans %}</th>
+			<th>{% blocktrans %}დრო{% endblocktrans %}</th>
+			<th>{% blocktrans %}დეტალები{% endblocktrans %}</th>
+		</thead>
+		<tbody>
+			<td style="color: red"></td>
+			<td></td>
+			<td></td>
+		</tbody>
+        <tfoot>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tfoot>
+	</table>	
+</div>
+	<script>
+		$(document).ready( function () {
+
+			$('#deposited').DataTable( {
+				"ajax": {
+					"url": '/ajax/historyd',
+				},
+				"columns": [
+					{ "data": "change" },
+					{ "data": "time" },
+					{ "data": "security_code" },
+				],
+                "order": [
+                    [ 2, "asc" ]
+				],
+				"oLanguage": {
+					"sEmptyTable": "{% blocktrans %}ცარიელია{% endblocktrans %}"
+					},
+			} );
+
+			$('#withdrawn').DataTable( {
+				"ajax": {
+					"url": '/ajax/historyw',
+				},				
+					"columns": [
+					{ "data": "change" },
+					{ "data": "time" },
+					{ "data": "security_code" },
+					{ "data": "details" },
+				],
+                "order": [
+                    [ 2, "asc" ]
+				],
+				"oLanguage": {
+					"sEmptyTable": "{% blocktrans %}ცარიელია{% endblocktrans %}"
+					},
+			} );
+
+			$('#boosted').DataTable( {
+				"ajax": {
+					"url": '/ajax/historyb',
+				},
+				"columns": [
+					{ "data": "change" },
+					{ "data": "time" },
+					{ "data": "details" },
+				],
+                "order": [
+                    [ 2, "asc" ]
+				],
+				"oLanguage": {
+					"sEmptyTable": "{% blocktrans %}ცარიელია{% endblocktrans %}"
+					},
+			} );
+
+		});
+
+	</script>
+{% endblock %}

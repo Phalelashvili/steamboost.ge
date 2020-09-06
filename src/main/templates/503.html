@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>goodbye</title>
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:700,900" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="https://colorlib.com/etc/404/colorlib-error-404-6/css/style.css"/>
+</head>
+<body>
+	<div id="notfound">
+        <div class="notfound">
+            <div class="notfound-404">
+                <h1>steamboost</h1>
+                <h2 style="font-size: 25px; top: 0px">
+                    we're no longer offering steam boosting services, thanks for using steamboost.ge</br></br>
+                    you can still use extensions by logging in
+                </h2>
+            </div>
+            {% if user.is_anonymous %}
+            <a style="margin-top: 100px" href="/login/steam">Login</a>
+            {% else %}
+            <a style="margin-top: 100px" href="/logout">Logout ({{ user.username }})</a>
+            {% endif %}
+        </div>
+	</div>
+</body>
+</html>

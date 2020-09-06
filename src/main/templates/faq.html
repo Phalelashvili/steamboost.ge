@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block faq_active %}
+header__menu-link--active
+{% endblock %}
+{% block head %}
+<title>SteamBoost - F.A.Q</title>
+<style>
+    body{
+        background-color: #1b212e;
+    }
+    .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+        background-color: #e50d0d;
+    }
+    .text-warning {
+        color: #e50d0d;
+    }
+    p {
+        color: #ffffff;
+    }
+    html{
+		font-size: 16px !important;
+    }
+</style>
+{% endblock head %}
+{% block body %}
+<main class="l-main-content" style="">
+<div class="container" style="margin-bottom:20%">
+    <div class="col-md-3" style="position:static;top:50px">
+    
+    <div class="list-group">
+        <li class="list-group-item active"></li>
+        <a href="faq#q1" class="list-group-item">თქვენთან რძე რა ღირს?</a>
+    
+        <li class="list-group-item active">ბუსტი</li> 
+        <a href="faq#q2" class="list-group-item">მეორე შეკითხვა რა იყოს?</a>
+        <a href="faq#q3" class="list-group-item">ორი გოჭი ღორია?</a>
+        <a href="faq#q4" class="list-group-item">ორი ბერა ზამთარია?</a>
+        <a href="faq#q5" class="list-group-item">შენი თავი რო შეჭამო გასუქდები თუ გაქრები?</a>
+        <a href="faq#q6" class="list-group-item">ცსგოში რა რანკი ხარ?</a>
+        <a href="faq#q7" class="list-group-item">ყ₾ე შეკითხვა 1</a>
+    
+        <li class="list-group-item active">დეპოზიტი</li> 
+        <a href="faq#q13" class="list-group-item">ყ₾ე შეკითხვა 2</a>
+    
+        <li class="list-group-item active">გატანა</li>
+        <a href="faq#q8" class="list-group-item">ყ₾ე შეკითხვა 3</a>
+        <a href="faq#q9" class="list-group-item">ყ₾ე შეკითხვა 11</a>
+        <a href="faq#q10" class="list-group-item">რაღაცა გეშლება</a>
+        <li class="list-group-item active">ხუივოზნაეტ</li>
+        <a href="faq#q11" class="list-group-item">მაზანაშვილი რო ფანჯრიდან გადმოხტა გაიგეთ?</a>
+        <a href="faq#q12" class="list-group-item">Rush B</a>
+    </div>
+    </div>
+    
+    <div class="col-md-9">
+            <h4 id="q1" style="margin-top:0px" class="text-warning">თქვენთან რძე რა ღირს?</h4>
+                <p>4.5 ლარი</p>
+            <h4 id="q2" class="text-warning">სკინებს აქ იბარებენ?</h4>
+                <p>არვიცი ზმაო აბაშას მიწერე აქ ჩვენ რძეს ვყიდით</p>
+            <h4 id="q3" class="text-warning">ორი გოჭი ღორია?</h4>
+                <p>არა</p>
+            <h4 id="q4" class="text-warning">ორი ბერა ზამთარია?</h4>
+                <p>კი</p>
+            <h4 id="q5" class="text-warning">შენი თავი რო შეჭამო გასუქდები თუ გაქრები?</h4>
+                <p>ხუივოზნაეტ</p>
+            <h4 id="q6" class="text-warning">ცსგოში რა რანკი ხარ?</h4>
+                <p>Global Elite <br> 2</p>
+            <h4 id="q7" class="text-warning">ყ₾ე</h4>
+                <p>შეკითხვები</p>
+            <h4 id="q8" class="text-warning">მელევა</h4>
+                <p>რა ჩემი ₾ე დავწერო</p>
+            <h4 id="q9" class="text-warning">რაკაი ამინდია გარეთ</h4>
+                <p>ხოო</p>
+            <h4 id="q10" class="text-warning">ყ₾ე შეკითხვა 11</h4>
+                <p>ყ₾ე პასუხი 11</p>
+            <h4 id="q11" class="text-warning">არადა ეგ მეათე შეკითხვა იყო</h4>
+                <p>დაითვალე თუგინდა</p>
+            <h4 id="q12" class="text-warning">ჩინელების დედამოვტყან</h4>
+                <p>და რუსების</p>               
+            <h4 id="q13" class="text-warning">ძლივს მორჩა</h4>
+        <p>( ͡° ͜ʖ ͡°)</p></div>
+    </div>		
+</main>
+{% endblock body %}
